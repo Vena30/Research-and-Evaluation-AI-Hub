@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaxAce AI Hub</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f4f0;--surface:#fff;--surface-alt:#f1efe8;
+  --border:rgba(0,0,0,0.09);--border-strong:rgba(0,0,0,0.16);
+  --text:#1a1a18;--text-2:#5f5e5a;--text-3:#888780;
+  --teal:#0f6e56;--teal-dark:#085041;--teal-bg:#e1f5ee;
+  --purple-bg:#eeedfe;--purple-text:#3c3489;
+  --radius:8px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1a1a18;--surface:#2c2c2a;--surface-alt:#242422;
+  --border:rgba(255,255,255,0.07);--border-strong:rgba(255,255,255,0.13);
+  --text:#e8e6de;--text-2:#9c9a92;--text-3:#5f5e5a;
+  --teal-bg:#04342c;--teal-dark:#9fe1cb;
+  --purple-bg:#26215c;--purple-text:#cecbf6;
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;font-size:14px;line-height:1.6}
+
+nav{padding:1rem 2rem;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--border);background:var(--surface)}
+.logomark{width:32px;height:32px;border-radius:8px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.5px}
+.nav-title{font-size:15px;font-weight:500;color:var(--text)}
+.nav-sub{font-size:12px;color:var(--text-3);margin-left:2px}
+.nav-ace{margin-left:auto;padding:6px 14px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:var(--surface-alt);color:var(--text-2);font-size:12px;text-decoration:none;transition:all .15s}
+.nav-ace:hover{background:var(--teal-bg);color:var(--teal-dark);border-color:var(--teal)}
+
+.hero{padding:3.5rem 2rem 2rem;text-align:center;max-width:500px;margin:0 auto}
+.hero-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.08em;color:var(--teal);text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-size:26px;font-weight:500;line-height:1.25;color:var(--text);margin-bottom:10px}
+.hero p{font-size:14px;color:var(--text-2);line-height:1.6}
+
+.section{max-width:680px;margin:0 auto;padding:0 2rem;margin-bottom:8px;margin-top:2rem}
+.section-label{font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:0.06em;text-transform:uppercase}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;max-width:680px;margin:0 auto;padding:0 2rem 0.5rem}
+
+.tool-card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:1.5rem;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:12px;transition:all .18s;position:relative;overflow:hidden}
+.tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-accent,var(--teal));border-radius:12px 12px 0 0;opacity:0;transition:opacity .18s}
+.tool-card:hover{border-color:var(--border-strong);transform:translateY(-2px)}
+.tool-card:hover::before{opacity:1}
+.tool-card.c-teal{--card-accent:#0f6e56}
+.tool-card.c-purple{--card-accent:#7f77dd}
+
+.card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.icon-teal{background:var(--teal-bg)}
+.icon-purple{background:var(--purple-bg)}
+
+.card-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.04em;margin-bottom:4px}
+.ey-teal{color:var(--teal-dark)}
+.ey-purple{color:var(--purple-text)}
+
+.card-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:5px}
+.card-desc{font-size:13px;color:var(--text-2);line-height:1.55;flex:1}
+
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:0.5px solid var(--border);margin-top:4px}
+.card-meta{font-size:11px;color:var(--text-3)}
+.card-arrow{font-size:16px;color:var(--text-3);transition:transform .15s}
+.tool-card:hover .card-arrow{transform:translateX(3px);color:var(--text)}
+
+.rule-bar{max-width:680px;margin:2rem auto 0;padding:0 2rem}
+.rule-inner{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.rule-label{font-size:12px;font-weight:500;color:var(--text-2);white-space:nowrap}
+.rule-divider{width:0.5px;height:20px;background:var(--border-strong);flex-shrink:0}
+.rule-text{font-size:12px;color:var(--text-3);line-height:1.5}
+.rule-link{font-size:12px;color:var(--teal);text-decoration:none;white-space:nowrap;margin-left:auto}
+.rule-link:hover{text-decoration:underline}
+
+footer{margin-top:auto;padding:2rem;text-align:center;font-size:12px;color:var(--text-3);border-top:0.5px solid var(--border)}
+
+@media(max-width:520px){
+  nav{padding:.875rem 1.25rem}
+  .hero{padding:2.5rem 1.25rem 1.5rem}
+  .hero h1{font-size:22px}
+  .grid,.section,.rule-bar{padding-left:1.25rem;padding-right:1.25rem}
+  .rule-divider{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logomark">TA</div>
+  <span class="nav-title">TaxAce AI Hub</span>
+  <span class="nav-sub">&middot; R&amp;E</span>
+  <a class="nav-ace" href="https://claude.ai/project/019f02c9-08b3-7654-97d2-808d9c6738fb" target="_blank">Open AICC Vena OID &#8599;</a>
+</nav>
+
+<div class="hero">
+  <p class="hero-eyebrow">Research &amp; Evaluation</p>
+  <h1>Your AI toolkit, one place</h1>
+  <p>Tools built for the TaxAce R&amp;E team. Launch any task in one click or track every tool in the stack. AI drafts. You decide.</p>
+</div>
+
+<div class="section"><p class="section-label">Live tools</p></div>
+<div class="grid">
+
+  <a href="./re-assistant.html" class="tool-card c-teal">
+    <div class="card-icon icon-teal">&#9889;</div>
+    <div>
+      <p class="card-eyebrow ey-teal">R&amp;E Assistant</p>
+      <p class="card-title">AI task assistant</p>
+    </div>
+    <p class="card-desc">Describe any R&amp;E task and get a direct path to the right specialist, workflow, or prompt &mdash; with one click to open AICC Vena OID.</p>
+    <div class="card-footer">
+      <span class="card-meta">Chips &middot; quick launch &middot; task library</span>
+      <span class="card-arrow">&#8594;</span>
+    </div>
+  </a>
+
+  <a href="./stack-dashboard.html" class="tool-card c-purple">
+    <div class="card-icon icon-purple">&#128202;</div>
+    <div>
+      <p class="card-eyebrow ey-purple">Stack Dashboard</p>
+      <p class="card-title">Tool inventory &amp; cost tracker</p>
+    </div>
+    <p class="card-desc">Every tool TaxAce pays for &mdash; monthly cost, renewal dates, and status in one view. Add, edit, filter, and export CSV.</p>
+    <div class="card-footer">
+      <span class="card-meta">61 tools &middot; sortable &middot; exportable</span>
+      <span class="card-arrow">&#8594;</span>
+    </div>
+  </a>
+
+</div>
+
+<div class="rule-bar">
+  <div class="rule-inner">
+    <span class="rule-label">The one rule</span>
+    <div class="rule-divider"></div>
+    <span class="rule-text">AI drafts. You decide. Nothing reaches a client or leadership without human review.</span>
+    <a class="rule-link" href="https://claude.ai/project/019f02c9-08b3-7654-97d2-808d9c6738fb" target="_blank">Open AICC Vena OID &#8594;</a>
+  </div>
+</div>
+
+<footer>TaxAce Group Inc. &middot; R&amp;E AI Hub &middot; Built July 2026</footer>
+
+</body>
+</html>

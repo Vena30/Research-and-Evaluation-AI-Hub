@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaxAce R&E AI Assistant</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface-alt: #f1efe8;
+    --border: rgba(0,0,0,0.1);
+    --border-strong: rgba(0,0,0,0.18);
+    --text-primary: #1a1a18;
+    --text-secondary: #5f5e5a;
+    --text-muted: #888780;
+    --accent-bg: #e6f1fb;
+    --accent-text: #185fa5;
+    --accent-border: #85b7eb;
+    --success-bg: #eaf3de;
+    --success-text: #3b6d11;
+    --warning-bg: #faeeda;
+    --warning-text: #854f0b;
+    --danger-bg: #fcebeb;
+    --danger-text: #a32d2d;
+    --teal: #0f6e56;
+    --teal-bg: #e1f5ee;
+    --teal-dark: #085041;
+    --radius: 8px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --surface: #2c2c2a;
+      --surface-alt: #242422;
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.14);
+      --text-primary: #e8e6de;
+      --text-secondary: #9c9a92;
+      --text-muted: #5f5e5a;
+      --accent-bg: #0c447c;
+      --accent-text: #b5d4f4;
+      --accent-border: #185fa5;
+      --success-bg: #27500a;
+      --success-text: #c0dd97;
+      --warning-bg: #633806;
+      --warning-text: #fac775;
+      --danger-bg: #791f1f;
+      --danger-text: #f7c1c1;
+      --teal: #5dcaa5;
+      --teal-bg: #04342c;
+      --teal-dark: #9fe1cb;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    line-height: 1.6;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  header { margin-bottom: 2rem; }
+
+  .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+
+  .logo-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--teal); display: flex; align-items: center;
+    justify-content: center; color: #fff; font-weight: 700;
+    font-size: 15px; letter-spacing: -0.5px; flex-shrink: 0;
+  }
+
+  h1 { font-size: 18px; font-weight: 500; color: var(--text-primary); }
+  .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+  .card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
+  }
+
+  label { font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 8px; }
+
+  textarea {
+    width: 100%; padding: 10px 14px; border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong); background: var(--surface-alt);
+    font-size: 14px; color: var(--text-primary); resize: none; font-family: inherit; line-height: 1.5;
+  }
+  textarea:focus { outline: none; border-color: var(--accent-border); }
+  textarea::placeholder { color: var(--text-muted); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .chip {
+    display: inline-block; padding: 6px 12px; border-radius: 20px;
+    border: 0.5px solid var(--border-strong); font-size: 13px;
+    color: var(--text-secondary); cursor: pointer; background: var(--surface-alt);
+    transition: all 0.15s; user-select: none;
+  }
+  .chip:hover, .chip.active {
+    background: var(--accent-bg); color: var(--accent-text); border-color: var(--accent-border);
+  }
+  .chips-label { font-size: 12px; color: var(--text-muted); margin: 14px 0 6px; }
+
+  .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.5rem 0; }
+
+  .task-card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 1.1rem 1.25rem; margin-bottom: 10px;
+  }
+  .task-title { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+  .task-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.5; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: flex-start; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; }
+  .tag-fast { background: var(--success-bg); color: var(--success-text); }
+  .tag-review { background: var(--warning-bg); color: var(--warning-text); }
+  .tag-human { background: var(--danger-bg); color: var(--danger-text); }
+  .tag-detail { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .tag-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+
+  /* Launch button — copy + open */
+  .launch-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-top: 10px; padding: 8px 16px; border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong); background: var(--surface-alt);
+    color: var(--text-primary); font-size: 13px; text-decoration: none;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+    position: relative;
+  }
+  .launch-btn:hover { background: var(--teal-bg); color: var(--teal-dark); border-color: var(--teal); }
+  .launch-btn .btn-icon { font-size: 14px; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(10px);
+    background: var(--text-primary); color: var(--bg); padding: 9px 18px;
+    border-radius: 20px; font-size: 13px; opacity: 0; pointer-events: none;
+    transition: all 0.25s; z-index: 999; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Result banner */
+  .result-banner {
+    background: var(--accent-bg); border: 0.5px solid var(--accent-border);
+    border-radius: var(--radius); padding: 10px 14px; margin-top: 12px;
+    font-size: 13px; color: var(--accent-text); display: none;
+  }
+  .result-banner.show { display: block; }
+
+  /* Main launch button in top card */
+  .main-launch {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 14px; padding: 9px 18px; border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong); background: var(--surface-alt);
+    color: var(--text-primary); font-size: 13px; cursor: pointer;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .main-launch:hover { background: var(--teal-bg); color: var(--teal-dark); border-color: var(--teal); }
+
+  .section-label { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.01em; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 1rem; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+
+  footer { margin-top: 2rem; font-size: 12px; color: var(--text-muted); text-align: center; padding-bottom: 2rem; }
+
+  @media (max-width: 480px) {
+    body { padding: 1rem 0.75rem; }
+    .card, .task-card { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="logo-row">
+      <div class="logo-mark">TA</div>
+      <h1>R&amp;E AI Assistant</h1>
+    </div>
+    <p class="subtitle">TaxAce Group Inc. · Research &amp; Evaluation Lead</p>
+  </header>
+
+  <!-- Top task card -->
+  <div class="card">
+    <label for="task-input">What are you working on today?</label>
+    <textarea id="task-input" rows="2" placeholder="e.g. I need to evaluate a new AI tool for client intake..."></textarea>
+
+    <p class="chips-label">Or pick a common R&amp;E task:</p>
+    <div class="chips" id="chips">
+      <span class="chip" data-task="Evaluate a new AI tool or software">Evaluate a tool</span>
+      <span class="chip" data-task="Run a stack audit and find cost savings">Stack audit</span>
+      <span class="chip" data-task="Research market alternatives to a tool we use">Market research</span>
+      <span class="chip" data-task="Write an evaluation report for leadership">Write a report</span>
+      <span class="chip" data-task="Review and test a prompt before it goes live">Prompt QA</span>
+      <span class="chip" data-task="Track whether an adopted tool is actually being used">Adoption check</span>
+    </div>
+
+    <div class="result-banner" id="result-banner"></div>
+
+    <div>
+      <button class="main-launch" id="ace-btn" onclick="launchMain()">
+        <span>📋</span> Copy prompt &amp; open AICC Vena OID ↗
+      </button>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">Copies your prompt to clipboard, then opens your project. Paste to start.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <p class="section-label">Full R&amp;E task library — how AI can help</p>
+
+  <!-- Tool evaluation -->
+  <div class="task-card">
+    <p class="task-title">Tool evaluation</p>
+    <p class="task-desc">Assessing a new AI tool, software, or vendor solution before TaxAce commits.</p>
+    <div class="tags">
+      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Research brief · Five-lens assessment · Draft report · Gap list</span></div>
+      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Final adopt/improve/reject call · Data privacy sign-off</span></div>
+    </div>
+    <button class="launch-btn" onclick="launchPrompt(this, 'Help me run a tool evaluation using the TaxAce AI Tool Evaluator specialist. Walk me through what I need to provide.')">
+      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
+    </button>
+  </div>
+
+  <!-- Stack audit -->
+  <div class="task-card">
+    <p class="task-title">Stack audit &amp; cost reduction</p>
+    <p class="task-desc">Reviewing TaxAce's full tool inventory to find waste, overlap, or better options.</p>
+    <div class="tags">
+      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Enriched inventory · Duplicate map · Savings estimate · Priority action list</span></div>
+      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Locked contracts · Compliance-required tools · Final recommendations to leadership</span></div>
+    </div>
+    <button class="launch-btn" onclick="launchPrompt(this, 'Help me run the Stack Audit and Cost Reduction workflow. What inventory do I need to gather first?')">
+      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
+    </button>
+  </div>
+
+  <!-- Market research -->
+  <div class="task-card">
+    <p class="task-title">Market research</p>
+    <p class="task-desc">Finding current pricing, competitor landscape, and vendor context before an evaluation or audit.</p>
+    <div class="tags">
+      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Competitor landscape · Pricing comparison · Vendor change flags</span></div>
+      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Verify pricing before presenting to leadership</span></div>
+    </div>
+    <button class="launch-btn" onclick="launchPrompt(this, 'I need to research market alternatives to a tool TaxAce currently uses. Help me structure the research.')">
+      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
+    </button>
+  </div>
+
+  <!-- Report writing -->
+  <div class="task-card">
+    <p class="task-title">Evaluation report writing</p>
+    <p class="task-desc">Turning raw audit or evaluation findings into a leadership-ready document in TaxAce's voice.</p>
+    <div class="tags">
+      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Executive summary · Findings write-up · Priority action list</span></div>
+      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Accuracy of all figures · Internal context AI doesn't have</span></div>
+    </div>
+    <button class="launch-btn" onclick="launchPrompt(this, 'I have evaluation findings ready. Help me write a leadership-ready report in TaxAce voice.')">
+      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
+    </button>
+  </div>
+
+  <!-- Prompt QA -->
+  <div class="task-card">
+    <p class="task-title">Prompt QA review</p>
+    <p class="task-desc">Testing AI prompts for accuracy, guardrail compliance, and hallucination risk before they go live.</p>
+    <div class="tags">
+      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Red-team questions · Guardrail check · Risk flags with fixes</span></div>
+      <div class="tag-row"><span class="tag tag-human">Human approves</span><span class="tag-detail">Any prompt touching client data or compliance — no exceptions</span></div>
+    </div>
+    <button class="launch-btn" onclick="launchPrompt(this, 'I have a prompt I want to QA before it goes live at TaxAce. Help me test it against the dossier guardrails.')">
+      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
+    </button>
+  </div>
+
+  <!-- Adoption tracking -->
+  <div class="task-card">
+    <p class="task-title">Adoption tracking</p>
+    <p class="task-desc">Checking whether tools TaxAce adopted are actually being used and delivering value.</p>
+    <div class="tags">
+      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Usage question set · Before/after comparison · Next-step recommendations</span></div>
+      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Actual usage data from team · Final keep or cut decision</span></div>
+    </div>
+    <button class="launch-btn" onclick="launchPrompt(this, 'Help me check whether a tool TaxAce adopted is actually being used. What questions should I ask the team?')">
+      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
+    </button>
+  </div>
+
+  <hr class="divider">
+
+  <div class="legend">
+    <div class="legend-item"><span class="tag tag-fast">AI drafts</span> AI generates first — fast, complete</div>
+    <div class="legend-item"><span class="tag tag-review">Human reviews</span> You verify before it's final</div>
+    <div class="legend-item"><span class="tag tag-human">Human approves</span> You decide — no exceptions</div>
+  </div>
+
+  <footer>TaxAce Group Inc. · R&amp;E AI Assistant · Built June 2026</footer>
+
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">✓ Prompt copied — paste it in AICC Vena OID</div>
+
+<script>
+const PROJECT_URL = 'https://claude.ai/project/019f02c9-08b3-7654-97d2-808d9c6738fb';
+
+const prompts = {
+  'Evaluate a new AI tool or software': {
+    text: 'Sounds like a tool evaluation. Use the AI Tool Evaluator specialist — have the tool name, proposed use case, and any pricing or security docs ready.',
+    prompt: 'Help me run a tool evaluation using the TaxAce AI Tool Evaluator specialist. Walk me through what I need to provide.'
+  },
+  'Run a stack audit and find cost savings': {
+    text: 'Run the Stack Audit play. Gather your tool inventory first — name, cost, billing cycle, and which team uses it. Rough notes are fine.',
+    prompt: 'Help me run the Stack Audit and Cost Reduction workflow. What inventory do I need to gather first?'
+  },
+  'Research market alternatives to a tool we use': {
+    text: 'Start with the Research Specialist. It enriches your tool data with current pricing and alternatives before any recommendation is made.',
+    prompt: 'I need to research market alternatives to a tool TaxAce currently uses. Help me structure the research.'
+  },
+  'Write an evaluation report for leadership': {
+    text: 'Use the Report Writer specialist. Have your raw findings ready — it will shape them into a leadership-ready document in TaxAce voice.',
+    prompt: 'I have evaluation findings ready. Help me write a leadership-ready report in TaxAce voice.'
+  },
+  'Review and test a prompt before it goes live': {
+    text: 'Run a Prompt QA. Paste the prompt and Claude will red-team it against TaxAce dossier guardrails. Human approval required before it goes live.',
+    prompt: 'I have a prompt I want to QA before it goes live at TaxAce. Help me test it against the dossier guardrails.'
+  },
+  'Track whether an adopted tool is actually being used': {
+    text: 'Run an adoption check. Gather actual usage data from the team first — AI will build the question set and comparison template.',
+    prompt: 'Help me check whether a tool TaxAce adopted is actually being used. What questions should I ask the team?'
+  }
+};
+
+// Current prompt for the main top button
+let currentPrompt = '';
+
+function copyAndOpen(text) {
+  navigator.clipboard.writeText(text).catch(() => {
+    // Fallback for browsers that block clipboard without interaction
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+  showToast();
+  setTimeout(() => window.open(PROJECT_URL, '_blank'), 300);
+}
+
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Task library buttons
+function launchPrompt(btn, promptText) {
+  // Brief visual feedback on button
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<span>✓</span> Copied! Opening…';
+  setTimeout(() => { btn.innerHTML = orig; }, 2000);
+  copyAndOpen(promptText);
+}
+
+// Main top button — uses chip selection or typed task
+function launchMain() {
+  let text = currentPrompt;
+  if (!text) {
+    const val = document.getElementById('task-input').value.trim();
+    if (val) {
+      text = 'As Ace, the TaxAce R&E AI assistant: ' + val + ' — what is the best way AI can help me with this task, and which specialist or workflow should I use?';
+    } else {
+      text = 'I need help with an R&E task at TaxAce. What specialists and workflows are available to me?';
+    }
+  }
+  const btn = document.getElementById('ace-btn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<span>✓</span> Copied! Opening…';
+  setTimeout(() => { btn.innerHTML = orig; }, 2000);
+  copyAndOpen(text);
+}
+
+// Chips
+const banner = document.getElementById('result-banner');
+const input = document.getElementById('task-input');
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const task = chip.dataset.task;
+    input.value = task;
+    const p = prompts[task];
+    if (p) {
+      currentPrompt = p.prompt;
+      banner.textContent = p.text;
+      banner.classList.add('show');
+    }
+  });
+});
+
+// Free-text input
+input.addEventListener('input', () => {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  currentPrompt = '';
+  const val = input.value.trim();
+  if (val.length > 10) {
+    banner.textContent = 'Type your task, then click the button — your prompt will be copied and AICC Vena OID will open. Just paste.';
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+});
+</script>
+</body>
+</html>
