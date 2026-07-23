@@ -240,6 +240,9 @@ footer{margin-top:2rem;font-size:11px;color:var(--text-3);text-align:center;padd
     <div class="field">
       <label class="field-label">Output to validate <span style="color:var(--red-text)">*</span></label>
       <span class="field-sub">Paste the AI-generated or human-written content you want to check.</span>
+      <button class="btn-secondary" onclick="openDraftingChat()" style="font-size:12px;padding:6px 12px;margin-bottom:8px">
+        &#8599; Need to generate the output first? Open drafting chat
+      </button>
       <textarea id="output-input" rows="9" placeholder="Paste the output you want to validate here…"></textarea>
     </div>
 
@@ -639,6 +642,12 @@ function renderHistory() {
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 renderHistory();
+
+// --- Open drafting chat (for generating output before validating) ---
+
+function openDraftingChat() {
+  window.open('https://claude.ai/chat/c380c8e2-b25b-4750-b382-700991bedff4', '_blank');
+}
 
 // --- Copy validation prompt & open new Claude chat ---
 
