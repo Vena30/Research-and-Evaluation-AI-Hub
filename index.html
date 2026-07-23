@@ -12,6 +12,7 @@
   --text:#1a1a18;--text-2:#5f5e5a;--text-3:#888780;
   --teal:#0f6e56;--teal-dark:#085041;--teal-bg:#e1f5ee;
   --purple-bg:#eeedfe;--purple-text:#3c3489;
+  --amber-bg:#faeeda;--amber-text:#8a5310;
   --radius:8px;
 }
 @media(prefers-color-scheme:dark){:root{
@@ -20,6 +21,7 @@
   --text:#e8e6de;--text-2:#9c9a92;--text-3:#5f5e5a;
   --teal-bg:#04342c;--teal-dark:#9fe1cb;
   --purple-bg:#26215c;--purple-text:#cecbf6;
+  --amber-bg:#412402;--amber-text:#fac775;
 }}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;font-size:14px;line-height:1.6}
 
@@ -46,14 +48,17 @@ nav{padding:1rem 2rem;display:flex;align-items:center;gap:10px;border-bottom:0.5
 .tool-card:hover::before{opacity:1}
 .tool-card.c-teal{--card-accent:#0f6e56}
 .tool-card.c-purple{--card-accent:#7f77dd}
+.tool-card.c-amber{--card-accent:#c98a2e}
 
 .card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .icon-teal{background:var(--teal-bg)}
 .icon-purple{background:var(--purple-bg)}
+.icon-amber{background:var(--amber-bg)}
 
 .card-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.04em;margin-bottom:4px}
 .ey-teal{color:var(--teal-dark)}
 .ey-purple{color:var(--purple-text)}
+.ey-amber{color:var(--amber-text)}
 
 .card-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:5px}
 .card-desc{font-size:13px;color:var(--text-2);line-height:1.55;flex:1}
@@ -122,6 +127,19 @@ footer{margin-top:auto;padding:2rem;text-align:center;font-size:12px;color:var(-
     <p class="card-desc">Every tool TaxAce pays for &mdash; monthly cost, renewal dates, and status in one view. Add, edit, filter, and export CSV.</p>
     <div class="card-footer">
       <span class="card-meta">61 tools &middot; sortable &middot; exportable</span>
+      <span class="card-arrow">&#8594;</span>
+    </div>
+  </a>
+
+  <a href="./taxace-accuracy-validator.html" class="tool-card c-amber">
+    <div class="card-icon icon-amber">&#9989;</div>
+    <div>
+      <p class="card-eyebrow ey-amber">Accuracy Validator</p>
+      <p class="card-title">Pre-send QA check</p>
+    </div>
+    <p class="card-desc">Paste, upload, or brief the source material behind any AI output &mdash; evaluation report, stack audit, client comms &mdash; and get every claim checked against it before it goes out.</p>
+    <div class="card-footer">
+      <span class="card-meta">8 output types &middot; pass threshold &middot; claim-by-claim check</span>
       <span class="card-arrow">&#8594;</span>
     </div>
   </a>
