@@ -253,14 +253,24 @@ footer{margin-top:2rem;font-size:11px;color:var(--text-3);text-align:center;padd
     </div>
 
     <p id="error-msg" style="font-size:12px;color:var(--red-text);margin-top:8px;display:none"></p>
+
+    <button class="btn-primary" id="validate-btn" onclick="runValidation()" style="margin-top:10px">
+      <span id="btn-text">Validate output</span>
+    </button>
   </div>
 
-  <!-- Paste JSON result (primary path — manual validation via Claude chat) -->
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p id="loading-msg">Running accuracy check…</p>
+  </div>
+
+  <!-- Paste JSON result (backup path — manual validation via Claude chat) -->
   <div class="card" id="json-paste-card" style="border:1px solid var(--teal)">
     <div class="section-head">
-      <span class="section-title" style="color:var(--teal-dark)">Paste JSON result</span>
+      <span class="section-title" style="color:var(--teal-dark)">Backup: Paste JSON result</span>
     </div>
-    <span class="field-sub" style="margin-bottom:8px;display:block">Run the validation prompt in a new Claude conversation, then paste Claude's raw JSON reply below to render the full result screen — export, print, and history all work the same as a live validation.</span>
+    <span class="field-sub" style="margin-bottom:8px;display:block">If Validate output above isn't working, run the validation prompt manually in a Claude conversation, then paste Claude's raw JSON reply below to render the full result screen — export, print, and history all work the same as a live validation.</span>
 
     <button class="btn-secondary" onclick="copyPromptAndOpen()" style="margin-bottom:12px;width:100%;justify-content:center">
       &#128203; Copy validation prompt &amp; open Accuracy Validator chat
@@ -275,12 +285,6 @@ footer{margin-top:2rem;font-size:11px;color:var(--text-3);text-align:center;padd
     </button>
     <span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;text-align:center">Uses the Output type selected above to label this entry</span>
     <p id="json-paste-error" style="font-size:12px;color:var(--red-text);margin-top:8px;display:none"></p>
-  </div>
-
-  <!-- Loading -->
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <p id="loading-msg">Running accuracy check…</p>
   </div>
 
   <!-- Results -->
@@ -496,14 +500,22 @@ Severity: high = guardrail violation or false claim. medium = voice deviation or
 
   const userMsg = `Validate this output:\n---\n${output}\n---${source ? `\n\nSource material (${sourceModeLabel}):\n---\n${source.slice(0,4000)}\n---` : ''}`;
 
+  const PROXY_URL = 'https://script.google.com/macros/s/AKfycbxUFXJ2JlF6Up088LkUtopRm7iFx8Q_P2BYqG0e4QVB6-iRQpqHoJzNgS8PyU6dWbfNyA/exec';
+
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(PROXY_URL, {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      // Apps Script Web Apps don't handle CORS preflight (OPTIONS) requests.
+      // Sending as text/plain keeps this a "simple request" so the browser skips preflight.
+      // doPost() on the Apps Script side still parses this as JSON.
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:systemPrompt,messages:[{role:'user',content:userMsg}]})
     });
     const data = await res.json();
     clearInterval(msgInt);
+    if (data.error) {
+      throw new Error(data.error);
+    }
     const raw = data.content?.[0]?.text || '';
     const result = JSON.parse(raw.replace(/```json|```/g,'').trim());
     result.outputType = selectedType;
@@ -516,7 +528,7 @@ Severity: high = guardrail violation or false claim. medium = voice deviation or
     renderResult(result);
   } catch(e) {
     clearInterval(msgInt);
-    errEl.textContent = 'Validation failed — check your connection and try again.';
+    errEl.textContent = 'Validation failed — check your connection and try again, or use the backup Paste JSON option below.';
     errEl.style.display = 'block';
   }
 
