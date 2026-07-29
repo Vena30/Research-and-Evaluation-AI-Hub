@@ -250,7 +250,7 @@
       <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Research brief · Five-lens assessment · Draft report · Gap list</span></div>
       <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Final adopt/improve/reject call · Data privacy sign-off</span></div>
     </div>
-    <button class="launch-btn" onclick="launchPrompt(this, 'Open and follow AI-Tool-Evaluator-Specialist.md from this Project&#39;s files exactly. Walk me through what I need to provide to run a tool evaluation.')">
+    <button class="launch-btn" onclick="launchByTask(this, 'Evaluate a new AI tool or software')">
       <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
     </button>
   </div>
@@ -264,7 +264,7 @@
       <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Enriched inventory · Duplicate map · Savings estimate · Priority action list</span></div>
       <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Locked contracts · Compliance-required tools · Final recommendations to leadership</span></div>
     </div>
-    <button class="launch-btn" onclick="launchPrompt(this, 'Open and follow Stack-audit-cost-reduction.md, then AI-Tech-Stack-Optimization-Evaluator-Specialist.md, from this Project&#39;s files exactly. What inventory do I need to gather first to run this workflow?')">
+    <button class="launch-btn" onclick="launchByTask(this, 'Run a stack audit and find cost savings')">
       <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
     </button>
   </div>
@@ -278,7 +278,7 @@
       <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Competitor landscape · Pricing comparison · Vendor change flags</span></div>
       <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Verify pricing before presenting to leadership</span></div>
     </div>
-    <button class="launch-btn" onclick="launchPrompt(this, 'Open and follow Research-Specialist.md from this Project&#39;s files exactly. Help me structure research into market alternatives to a tool TaxAce currently uses.')">
+    <button class="launch-btn" onclick="launchByTask(this, 'Research market alternatives to a tool we use')">
       <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
     </button>
   </div>
@@ -292,7 +292,7 @@
       <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Executive summary · Findings write-up · Priority action list</span></div>
       <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Accuracy of all figures · Internal context AI doesn't have</span></div>
     </div>
-    <button class="launch-btn" onclick="launchPrompt(this, 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Report Writer specialist\'s file, open and follow it exactly, and help me write a leadership-ready report from my findings. If you can\'t find a matching file, tell me directly rather than improvising.')">
+    <button class="launch-btn" onclick="launchByTask(this, 'Write an evaluation report for leadership')">
       <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
     </button>
   </div>
@@ -306,7 +306,7 @@
       <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Red-team questions · Guardrail check · Risk flags with fixes</span></div>
       <div class="tag-row"><span class="tag tag-human">Human approves</span><span class="tag-detail">Any prompt touching client data or compliance — no exceptions</span></div>
     </div>
-    <button class="launch-btn" onclick="launchPrompt(this, 'Open and follow taxace-prompt-qa-reviewer.md from this Project&#39;s files exactly. Help me QA a prompt against TaxAce dossier guardrails before it goes live.')">
+    <button class="launch-btn" onclick="launchByTask(this, 'Review and test a prompt before it goes live')">
       <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
     </button>
   </div>
@@ -320,7 +320,7 @@
       <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Usage question set · Before/after comparison · Healthy / At Risk / Failing status</span></div>
       <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Actual usage data from team · Final Continue / Adjust / Escalate call</span></div>
     </div>
-    <button class="launch-btn" onclick="launchPrompt(this, 'Check TaxAce-AI-Team-Roster.md and this Project&#39;s files for the Adoption Check specialist&#39;s file, open and follow it exactly, and help me assess whether a tool TaxAce adopted is healthy, at risk, or failing. If you can&#39;t find a matching file, tell me directly rather than improvising.')">
+    <button class="launch-btn" onclick="launchByTask(this, 'Track whether an adopted tool is actually being used')">
       <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
     </button>
   </div>
@@ -334,7 +334,7 @@
       <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">What happened · What changed · What TaxAce carries forward</span></div>
       <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Confirm the result is actually settled before documenting it</span></div>
     </div>
-    <button class="launch-btn" onclick="launchPrompt(this, 'Check TaxAce-AI-Team-Roster.md and this Project&#39;s files for the Case Study Writer specialist&#39;s file, open and follow it exactly, and help me document a confirmed AI initiative result as a case study. If you can&#39;t find a matching file, tell me directly rather than improvising.')">
+    <button class="launch-btn" onclick="launchByTask(this, 'Document a confirmed result as a case study')">
       <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
     </button>
   </div>
@@ -357,48 +357,58 @@
 <script>
 const PROJECT_URL = 'https://claude.ai/project/019f02c9-08b3-7654-97d2-808d9c6738fb';
 
+// Shared fallback instruction appended to every specialist prompt.
+// If the named file isn't in the Project, Claude checks the roster and
+// picks the nearest match instead of stopping.
+function withFallback(fileRef, ask) {
+  return 'Open and follow ' + fileRef + ' from this Project\'s files exactly. ' + ask +
+    ' If ' + fileRef + ' isn\'t in this Project\'s files, check TaxAce-AI-Team-Roster.md, ' +
+    'find the specialist file that\'s the nearest match for this task, use that one instead, ' +
+    'and tell me which file you ended up using.';
+}
+
 const prompts = {
   'Evaluate a new AI tool or software': {
-    text: 'Sounds like a tool evaluation. This prompt tells Claude to follow AI-Tool-Evaluator-Specialist.md directly — have the tool name, proposed use case, and any pricing or security docs ready.',
-    prompt: 'Open and follow AI-Tool-Evaluator-Specialist.md from this Project\'s files exactly. Walk me through what I need to provide to run a tool evaluation.'
+    text: 'This prompt tells Claude to follow AI-Tool-Evaluator-Specialist.md — if that file isn\'t found, it falls back to the nearest roster match instead of stopping. Have the tool name, proposed use case, and any pricing or security docs ready.',
+    prompt: withFallback('AI-Tool-Evaluator-Specialist.md', 'Walk me through what I need to provide to run a tool evaluation.')
   },
   'Run a stack audit and find cost savings': {
-    text: 'This prompt points Claude to Stack-audit-cost-reduction.md and AI-Tech-Stack-Optimization-Evaluator-Specialist.md. Gather your tool inventory first — name, cost, billing cycle, and which team uses it.',
-    prompt: 'Open and follow Stack-audit-cost-reduction.md, then AI-Tech-Stack-Optimization-Evaluator-Specialist.md, from this Project\'s files exactly. What inventory do I need to gather first to run this workflow?'
+    text: 'This prompt points Claude to Stack-audit-cost-reduction.md and AI-Tech-Stack-Optimization-Evaluator-Specialist.md, with a roster fallback if either isn\'t found. Gather your tool inventory first — name, cost, billing cycle, and which team uses it.',
+    prompt: withFallback('Stack-audit-cost-reduction.md, then AI-Tech-Stack-Optimization-Evaluator-Specialist.md', 'What inventory do I need to gather first to run this workflow?')
   },
   'Research market alternatives to a tool we use': {
-    text: 'This prompt tells Claude to follow Research-Specialist.md directly for pricing and alternatives.',
-    prompt: 'Open and follow Research-Specialist.md from this Project\'s files exactly. Help me structure research into market alternatives to a tool TaxAce currently uses.'
+    text: 'This prompt tells Claude to follow Research-Specialist.md, with a roster fallback if it isn\'t found.',
+    prompt: withFallback('Research-Specialist.md', 'Help me structure research into market alternatives to a tool TaxAce currently uses.')
   },
   'Write an evaluation report for leadership': {
-    text: 'This prompt has Claude check TaxAce-AI-Team-Roster.md for the Report Writer specialist\'s file, then follow it — it turns your own findings into an exec-ready report.',
-    prompt: 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Report Writer specialist\'s file, open and follow it exactly, and help me write a leadership-ready report from my findings. If you can\'t find a matching file, tell me directly rather than improvising.'
+    text: 'This prompt tells Claude to follow the Report Writer specialist file, with a roster fallback to the nearest match if it isn\'t found.',
+    prompt: withFallback('the Report Writer specialist file', 'Help me write a leadership-ready report from my findings.')
   },
   'Review and test a prompt before it goes live': {
-    text: 'This prompt tells Claude to follow taxace-prompt-qa-reviewer.md directly. Human approval required before it goes live — no exceptions.',
-    prompt: 'Open and follow taxace-prompt-qa-reviewer.md from this Project\'s files exactly. Help me QA a prompt against TaxAce dossier guardrails before it goes live.'
+    text: 'This prompt tells Claude to follow taxace-prompt-qa-reviewer.md, with a roster fallback if it isn\'t found. Human approval required before it goes live — no exceptions.',
+    prompt: withFallback('taxace-prompt-qa-reviewer.md', 'Help me QA a prompt against TaxAce dossier guardrails before it goes live.')
   },
   'Track whether an adopted tool is actually being used': {
-    text: 'This prompt has Claude check the roster for the Adoption Check specialist\'s file, then follow it. Gather actual usage data from the team first.',
-    prompt: 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Adoption Check specialist\'s file, open and follow it exactly, and help me assess whether a tool TaxAce adopted is healthy, at risk, or failing. If you can\'t find a matching file, tell me directly rather than improvising.'
+    text: 'This prompt tells Claude to follow the Adoption Check specialist file, with a roster fallback if it isn\'t found. Gather actual usage data from the team first.',
+    prompt: withFallback('the Adoption Check specialist file', 'Help me assess whether a tool TaxAce adopted is healthy, at risk, or failing.')
   },
   'Document a confirmed result as a case study': {
-    text: 'This prompt has Claude check the roster for the Case Study Writer specialist\'s file, then follow it to turn a confirmed result into a documented case study.',
-    prompt: 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Case Study Writer specialist\'s file, open and follow it exactly, and help me document a confirmed AI initiative result as a case study. If you can\'t find a matching file, tell me directly rather than improvising.'
+    text: 'This prompt tells Claude to follow the Case Study Writer specialist file, with a roster fallback if it isn\'t found.',
+    prompt: withFallback('the Case Study Writer specialist file', 'Help me document a confirmed AI initiative result as a case study.')
   }
 };
 
 // Specialists reachable only via the "Other" dropdown
 const otherSpecialists = {
-  'AI Tool Evaluator': 'Open and follow AI-Tool-Evaluator-Specialist.md from this Project\'s files exactly.',
-  'Research Specialist': 'Open and follow Research-Specialist.md from this Project\'s files exactly.',
-  'Report Writer': 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Report Writer specialist\'s file, open and follow it exactly. If you can\'t find a matching file, tell me directly rather than improvising.',
-  'Case Study Writer': 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Case Study Writer specialist\'s file, open and follow it exactly. If you can\'t find a matching file, tell me directly rather than improvising.',
-  'AI + Tech Stack Optimization Evaluator': 'Open and follow Stack-audit-cost-reduction.md, then AI-Tech-Stack-Optimization-Evaluator-Specialist.md, from this Project\'s files exactly.',
-  'Accuracy Validator': 'Open and follow Accuracy-Validator-Specialist.md from this Project\'s files exactly. (You can also use the dedicated Accuracy Validator tool on the Hub for this.)',
-  'Prompt QA Reviewer': 'Open and follow taxace-prompt-qa-reviewer.md from this Project\'s files exactly.',
-  'Adoption Check': 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Adoption Check specialist\'s file, open and follow it exactly. If you can\'t find a matching file, tell me directly rather than improvising.',
-  'Not sure': 'Check TaxAce-AI-Team-Roster.md in this Project\'s files and tell me which specialist fits my task, then open and follow that specialist\'s file.'
+  'AI Tool Evaluator': withFallback('AI-Tool-Evaluator-Specialist.md', 'Help me run a tool evaluation.'),
+  'Research Specialist': withFallback('Research-Specialist.md', 'Help me with market and vendor research.'),
+  'Report Writer': withFallback('the Report Writer specialist file', 'Help me turn findings into a leadership-ready report.'),
+  'Case Study Writer': withFallback('the Case Study Writer specialist file', 'Help me document a confirmed result as a case study.'),
+  'AI + Tech Stack Optimization Evaluator': withFallback('Stack-audit-cost-reduction.md, then AI-Tech-Stack-Optimization-Evaluator-Specialist.md', 'Help me run a full stack audit.'),
+  'Accuracy Validator': withFallback('Accuracy-Validator-Specialist.md', 'Help me score a finished output for accuracy before it\'s used.') + ' You can also use the dedicated Accuracy Validator tool on the Hub for this.',
+  'Prompt QA Reviewer': withFallback('taxace-prompt-qa-reviewer.md', 'Help me test a prompt before it goes live.'),
+  'Adoption Check': withFallback('the Adoption Check specialist file', 'Help me assess whether a live tool is healthy or at risk.'),
+  'Not sure': 'Check TaxAce-AI-Team-Roster.md in this Project\'s files, tell me which specialist fits my task, then open and follow that specialist\'s file — and if there\'s no exact match, use the nearest one and tell me which you used.'
 };
 
 let currentPrompt = '';
@@ -429,6 +439,12 @@ function launchPrompt(btn, promptText) {
   btn.innerHTML = '<span>✓</span> Copied! Opening…';
   setTimeout(() => { btn.innerHTML = orig; }, 2000);
   copyAndOpen(promptText);
+}
+
+// Task-card buttons call this so they always match the chip prompts exactly — no drift.
+function launchByTask(btn, taskKey) {
+  const p = prompts[taskKey];
+  if (p) launchPrompt(btn, p.prompt);
 }
 
 function launchMain() {
