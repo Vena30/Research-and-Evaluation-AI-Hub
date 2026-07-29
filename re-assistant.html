@@ -210,7 +210,22 @@
       <span class="chip" data-task="Write an evaluation report for leadership">Write a report</span>
       <span class="chip" data-task="Review and test a prompt before it goes live">Prompt QA</span>
       <span class="chip" data-task="Track whether an adopted tool is actually being used">Adoption check</span>
+      <span class="chip" data-task="Document a confirmed result as a case study">Case study</span>
+      <span class="chip" id="other-chip">Other ▾</span>
     </div>
+
+    <select id="other-select" style="display:none;margin-top:10px;width:100%;padding:9px 12px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:var(--surface-alt);color:var(--text-primary);font-size:13px;font-family:inherit;">
+      <option value="">Choose a specialist directly…</option>
+      <option value="AI Tool Evaluator">AI Tool Evaluator — assess one new tool, adopt/improve/reject</option>
+      <option value="Research Specialist">Research Specialist — outside info, market, competitors</option>
+      <option value="Report Writer">Report Writer — turn TaxAce's own data into an exec report</option>
+      <option value="Case Study Writer">Case Study Writer — document a confirmed result</option>
+      <option value="AI + Tech Stack Optimization Evaluator">AI + Tech Stack Optimization Evaluator — full stack audit</option>
+      <option value="Accuracy Validator">Accuracy Validator — score any finished output before it's used</option>
+      <option value="Prompt QA Reviewer">Prompt QA Reviewer — test a prompt before it goes live</option>
+      <option value="Adoption Check">Adoption Check — is a live tool healthy or at risk</option>
+      <option value="Not sure">Not sure — check AICC Vena OID for the right specialist</option>
+    </select>
 
     <div class="result-banner" id="result-banner"></div>
 
@@ -272,12 +287,12 @@
   <div class="task-card">
     <p class="task-title">Evaluation report writing</p>
     <p class="task-desc">Turning raw audit or evaluation findings into a leadership-ready document in TaxAce's voice.</p>
-    <span class="file-tag">📄 taxace-dossier.md + taxace-orchestrator-persona.md</span>
+    <span class="file-tag">📄 Report Writer specialist (checked live against roster + files)</span>
     <div class="tags">
       <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Executive summary · Findings write-up · Priority action list</span></div>
       <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Accuracy of all figures · Internal context AI doesn't have</span></div>
     </div>
-    <button class="launch-btn" onclick="launchPrompt(this, 'A dedicated Report Writer specialist file may not exist yet in this Project. Follow taxace-dossier.md and taxace-orchestrator-persona.md for voice and guardrails, and help me write a leadership-ready report from my findings. Tell me if a Report-Writer-Specialist.md file exists that you should use instead.')">
+    <button class="launch-btn" onclick="launchPrompt(this, 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Report Writer specialist\'s file, open and follow it exactly, and help me write a leadership-ready report from my findings. If you can\'t find a matching file, tell me directly rather than improvising.')">
       <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
     </button>
   </div>
@@ -298,14 +313,28 @@
 
   <!-- Adoption tracking -->
   <div class="task-card">
-    <p class="task-title">Adoption tracking</p>
-    <p class="task-desc">Checking whether tools TaxAce adopted are actually being used and delivering value.</p>
-    <span class="file-tag">📄 workflow-ai-stack-intelligence.md (no dedicated specialist yet)</span>
+    <p class="task-title">Adoption check</p>
+    <p class="task-desc">Assessing whether an adopted tool or workflow is being used correctly, delivering value, and worth continuing.</p>
+    <span class="file-tag">📄 Adoption Check specialist (checked live against roster + files)</span>
     <div class="tags">
-      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Usage question set · Before/after comparison · Next-step recommendations</span></div>
-      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Actual usage data from team · Final keep or cut decision</span></div>
+      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Usage question set · Before/after comparison · Healthy / At Risk / Failing status</span></div>
+      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Actual usage data from team · Final Continue / Adjust / Escalate call</span></div>
     </div>
-    <button class="launch-btn" onclick="launchPrompt(this, 'Use workflow-ai-stack-intelligence.md from this Project&#39;s files as reference. Help me check whether a tool TaxAce adopted is actually being used — what questions should I ask the team?')">
+    <button class="launch-btn" onclick="launchPrompt(this, 'Check TaxAce-AI-Team-Roster.md and this Project&#39;s files for the Adoption Check specialist&#39;s file, open and follow it exactly, and help me assess whether a tool TaxAce adopted is healthy, at risk, or failing. If you can&#39;t find a matching file, tell me directly rather than improvising.')">
+      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
+    </button>
+  </div>
+
+  <!-- Case study -->
+  <div class="task-card">
+    <p class="task-title">Case study writing</p>
+    <p class="task-desc">Turning one confirmed AI-initiative result into a structured evidence document TaxAce carries forward.</p>
+    <span class="file-tag">📄 Case Study Writer specialist (checked live against roster + files)</span>
+    <div class="tags">
+      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">What happened · What changed · What TaxAce carries forward</span></div>
+      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Confirm the result is actually settled before documenting it</span></div>
+    </div>
+    <button class="launch-btn" onclick="launchPrompt(this, 'Check TaxAce-AI-Team-Roster.md and this Project&#39;s files for the Case Study Writer specialist&#39;s file, open and follow it exactly, and help me document a confirmed AI initiative result as a case study. If you can&#39;t find a matching file, tell me directly rather than improvising.')">
       <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
     </button>
   </div>
@@ -342,17 +371,34 @@ const prompts = {
     prompt: 'Open and follow Research-Specialist.md from this Project\'s files exactly. Help me structure research into market alternatives to a tool TaxAce currently uses.'
   },
   'Write an evaluation report for leadership': {
-    text: 'No dedicated Report Writer file yet — this prompt falls back to the dossier and orchestrator persona for voice and guardrails.',
-    prompt: 'A dedicated Report Writer specialist file may not exist yet in this Project. Follow taxace-dossier.md and taxace-orchestrator-persona.md for voice and guardrails, and help me write a leadership-ready report from my findings. Tell me if a Report-Writer-Specialist.md file exists that you should use instead.'
+    text: 'This prompt has Claude check TaxAce-AI-Team-Roster.md for the Report Writer specialist\'s file, then follow it — it turns your own findings into an exec-ready report.',
+    prompt: 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Report Writer specialist\'s file, open and follow it exactly, and help me write a leadership-ready report from my findings. If you can\'t find a matching file, tell me directly rather than improvising.'
   },
   'Review and test a prompt before it goes live': {
     text: 'This prompt tells Claude to follow taxace-prompt-qa-reviewer.md directly. Human approval required before it goes live — no exceptions.',
     prompt: 'Open and follow taxace-prompt-qa-reviewer.md from this Project\'s files exactly. Help me QA a prompt against TaxAce dossier guardrails before it goes live.'
   },
   'Track whether an adopted tool is actually being used': {
-    text: 'No dedicated specialist yet — this prompt uses workflow-ai-stack-intelligence.md as reference. Gather actual usage data from the team first.',
-    prompt: 'Use workflow-ai-stack-intelligence.md from this Project\'s files as reference. Help me check whether a tool TaxAce adopted is actually being used — what questions should I ask the team?'
+    text: 'This prompt has Claude check the roster for the Adoption Check specialist\'s file, then follow it. Gather actual usage data from the team first.',
+    prompt: 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Adoption Check specialist\'s file, open and follow it exactly, and help me assess whether a tool TaxAce adopted is healthy, at risk, or failing. If you can\'t find a matching file, tell me directly rather than improvising.'
+  },
+  'Document a confirmed result as a case study': {
+    text: 'This prompt has Claude check the roster for the Case Study Writer specialist\'s file, then follow it to turn a confirmed result into a documented case study.',
+    prompt: 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Case Study Writer specialist\'s file, open and follow it exactly, and help me document a confirmed AI initiative result as a case study. If you can\'t find a matching file, tell me directly rather than improvising.'
   }
+};
+
+// Specialists reachable only via the "Other" dropdown
+const otherSpecialists = {
+  'AI Tool Evaluator': 'Open and follow AI-Tool-Evaluator-Specialist.md from this Project\'s files exactly.',
+  'Research Specialist': 'Open and follow Research-Specialist.md from this Project\'s files exactly.',
+  'Report Writer': 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Report Writer specialist\'s file, open and follow it exactly. If you can\'t find a matching file, tell me directly rather than improvising.',
+  'Case Study Writer': 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Case Study Writer specialist\'s file, open and follow it exactly. If you can\'t find a matching file, tell me directly rather than improvising.',
+  'AI + Tech Stack Optimization Evaluator': 'Open and follow Stack-audit-cost-reduction.md, then AI-Tech-Stack-Optimization-Evaluator-Specialist.md, from this Project\'s files exactly.',
+  'Accuracy Validator': 'Open and follow Accuracy-Validator-Specialist.md from this Project\'s files exactly. (You can also use the dedicated Accuracy Validator tool on the Hub for this.)',
+  'Prompt QA Reviewer': 'Open and follow taxace-prompt-qa-reviewer.md from this Project\'s files exactly.',
+  'Adoption Check': 'Check TaxAce-AI-Team-Roster.md and this Project\'s files for the Adoption Check specialist\'s file, open and follow it exactly. If you can\'t find a matching file, tell me directly rather than improvising.',
+  'Not sure': 'Check TaxAce-AI-Team-Roster.md in this Project\'s files and tell me which specialist fits my task, then open and follow that specialist\'s file.'
 };
 
 let currentPrompt = '';
@@ -390,7 +436,7 @@ function launchMain() {
   if (!text) {
     const val = document.getElementById('task-input').value.trim();
     if (val) {
-      text = 'As Ace, the TaxAce R&E AI assistant: check TaxAce-AI-Team-Roster.md in this Project\'s files to find the right specialist, then open and follow that specialist file exactly. My task: ' + val;
+      text = 'Check TaxAce-AI-Team-Roster.md in this Project\'s files to find the right specialist, then open and follow that specialist file exactly. My task: ' + val;
     } else {
       text = 'Check TaxAce-AI-Team-Roster.md in this Project\'s files and tell me which specialists and workflows are available to me.';
     }
@@ -405,9 +451,11 @@ function launchMain() {
 const banner = document.getElementById('result-banner');
 const input = document.getElementById('task-input');
 
-document.querySelectorAll('.chip').forEach(chip => {
+document.querySelectorAll('.chip[data-task]').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('other-select').style.display = 'none';
+    document.getElementById('other-select').value = '';
     chip.classList.add('active');
     const task = chip.dataset.task;
     input.value = task;
@@ -418,6 +466,24 @@ document.querySelectorAll('.chip').forEach(chip => {
       banner.classList.add('show');
     }
   });
+});
+
+const otherChip = document.getElementById('other-chip');
+const otherSelect = document.getElementById('other-select');
+
+otherChip.addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  otherChip.classList.add('active');
+  otherSelect.style.display = otherSelect.style.display === 'none' ? 'block' : 'none';
+});
+
+otherSelect.addEventListener('change', () => {
+  const name = otherSelect.value;
+  if (!name) return;
+  input.value = name === 'Not sure' ? 'Not sure which specialist I need' : name;
+  currentPrompt = otherSpecialists[name];
+  banner.textContent = 'Prompt set to call the ' + name + ' specialist directly.';
+  banner.classList.add('show');
 });
 
 input.addEventListener('input', () => {
