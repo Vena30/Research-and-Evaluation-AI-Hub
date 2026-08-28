@@ -3,185 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TaxAce R&E AI Assistant</title>
+<title>TaxAce R&E AI Assistant — Live</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --surface-alt: #f1efe8;
-    --border: rgba(0,0,0,0.1);
-    --border-strong: rgba(0,0,0,0.18);
-    --text-primary: #1a1a18;
-    --text-secondary: #5f5e5a;
-    --text-muted: #888780;
-    --accent-bg: #e6f1fb;
-    --accent-text: #185fa5;
-    --accent-border: #85b7eb;
-    --success-bg: #eaf3de;
-    --success-text: #3b6d11;
-    --warning-bg: #faeeda;
-    --warning-text: #854f0b;
-    --danger-bg: #fcebeb;
-    --danger-text: #a32d2d;
-    --teal: #0f6e56;
-    --teal-bg: #e1f5ee;
-    --teal-dark: #085041;
+    --bg: #f5f4f0; --surface: #ffffff; --surface-alt: #f1efe8;
+    --border: rgba(0,0,0,0.1); --border-strong: rgba(0,0,0,0.18);
+    --text-primary: #1a1a18; --text-secondary: #5f5e5a; --text-muted: #888780;
+    --accent-bg: #e6f1fb; --accent-text: #185fa5; --accent-border: #85b7eb;
+    --warning-bg: #faeeda; --warning-text: #854f0b;
+    --danger-bg: #fcebeb; --danger-text: #a32d2d;
+    --teal: #0f6e56; --teal-bg: #e1f5ee; --teal-dark: #085041;
     --radius: 8px;
   }
-
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #1a1a18;
-      --surface: #2c2c2a;
-      --surface-alt: #242422;
-      --border: rgba(255,255,255,0.08);
-      --border-strong: rgba(255,255,255,0.14);
-      --text-primary: #e8e6de;
-      --text-secondary: #9c9a92;
-      --text-muted: #5f5e5a;
-      --accent-bg: #0c447c;
-      --accent-text: #b5d4f4;
-      --accent-border: #185fa5;
-      --success-bg: #27500a;
-      --success-text: #c0dd97;
-      --warning-bg: #633806;
-      --warning-text: #fac775;
-      --danger-bg: #791f1f;
-      --danger-text: #f7c1c1;
-      --teal: #5dcaa5;
-      --teal-bg: #04342c;
-      --teal-dark: #9fe1cb;
+      --bg: #1a1a18; --surface: #2c2c2a; --surface-alt: #242422;
+      --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14);
+      --text-primary: #e8e6de; --text-secondary: #9c9a92; --text-muted: #5f5e5a;
+      --accent-bg: #0c447c; --accent-text: #b5d4f4; --accent-border: #185fa5;
+      --warning-bg: #633806; --warning-text: #fac775;
+      --danger-bg: #791f1f; --danger-text: #f7c1c1;
+      --teal: #5dcaa5; --teal-bg: #04342c; --teal-dark: #9fe1cb;
     }
   }
-
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text-primary);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    line-height: 1.6;
+    background: var(--bg); color: var(--text-primary);
+    min-height: 100vh; padding: 2rem 1rem; line-height: 1.6;
   }
-
   .container { max-width: 720px; margin: 0 auto; }
-
-  header { margin-bottom: 2rem; }
-
+  header { margin-bottom: 1.5rem; }
   .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-
   .logo-mark {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: var(--teal); display: flex; align-items: center;
-    justify-content: center; color: #fff; font-weight: 700;
-    font-size: 15px; letter-spacing: -0.5px; flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 8px; background: var(--teal);
+    display: flex; align-items: center; justify-content: center; color: #fff;
+    font-weight: 700; font-size: 15px; letter-spacing: -0.5px; flex-shrink: 0;
   }
-
-  h1 { font-size: 18px; font-weight: 500; color: var(--text-primary); }
+  h1 { font-size: 18px; font-weight: 500; }
   .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-
+  .notice {
+    background: var(--warning-bg); color: var(--warning-text); border-radius: var(--radius);
+    padding: 10px 14px; font-size: 12px; margin-bottom: 1.25rem; line-height: 1.5;
+  }
   .card {
     background: var(--surface); border: 0.5px solid var(--border);
     border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
   }
-
   label { font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 8px; }
-
-  textarea {
+  select, textarea {
     width: 100%; padding: 10px 14px; border-radius: var(--radius);
     border: 0.5px solid var(--border-strong); background: var(--surface-alt);
-    font-size: 14px; color: var(--text-primary); resize: none; font-family: inherit; line-height: 1.5;
+    font-size: 14px; color: var(--text-primary); font-family: inherit; line-height: 1.5;
   }
-  textarea:focus { outline: none; border-color: var(--accent-border); }
-  textarea::placeholder { color: var(--text-muted); }
-
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  textarea { resize: none; }
+  textarea:focus, select:focus { outline: none; border-color: var(--accent-border); }
+  .field { margin-bottom: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; margin-bottom: 4px; }
   .chip {
     display: inline-block; padding: 6px 12px; border-radius: 20px;
     border: 0.5px solid var(--border-strong); font-size: 13px;
     color: var(--text-secondary); cursor: pointer; background: var(--surface-alt);
     transition: all 0.15s; user-select: none;
   }
-  .chip:hover, .chip.active {
-    background: var(--accent-bg); color: var(--accent-text); border-color: var(--accent-border);
+  .chip:hover, .chip.active { background: var(--accent-bg); color: var(--accent-text); border-color: var(--accent-border); }
+  .send-row { display: flex; gap: 8px; margin-top: 12px; align-items: flex-start; }
+  .send-btn {
+    display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px;
+    border-radius: var(--radius); border: 0.5px solid var(--border-strong);
+    background: var(--teal); color: #fff; font-size: 13px; cursor: pointer;
+    transition: all 0.15s; font-family: inherit; white-space: nowrap;
   }
-  .chips-label { font-size: 12px; color: var(--text-muted); margin: 14px 0 6px; }
-
-  .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.5rem 0; }
-
-  .task-card {
-    background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: 12px; padding: 1.1rem 1.25rem; margin-bottom: 10px;
+  .send-btn:hover { background: #0d5e49; }
+  .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .thread { display: flex; flex-direction: column; gap: 12px; margin-top: 1rem; }
+  .msg { padding: 12px 14px; border-radius: 12px; font-size: 13px; line-height: 1.6; }
+  .msg-user { background: var(--accent-bg); color: var(--accent-text); align-self: flex-end; max-width: 85%; }
+  .msg-assistant { background: var(--surface-alt); border: 0.5px solid var(--border); max-width: 100%; white-space: pre-wrap; }
+  .msg-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+  .msg-error { background: var(--danger-bg); color: var(--danger-text); }
+  .loading { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); padding: 8px 0; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); animation: pulse 1.2s infinite ease-in-out; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%, 80%, 100% { opacity: 0.3; } 40% { opacity: 1; } }
+  .active-specialist {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: var(--teal-dark); background: var(--teal-bg);
+    padding: 8px 12px; border-radius: var(--radius); margin-bottom: 10px;
   }
-  .task-title { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
-  .task-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.5; }
-
-  .file-tag {
-    display: inline-flex; align-items: center; gap: 4px; font-size: 11px;
-    color: var(--teal-dark); background: var(--teal-bg); padding: 2px 8px;
-    border-radius: 10px; margin-bottom: 10px; font-family: 'SF Mono', monospace;
-  }
-
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: flex-start; }
-  .tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; }
-  .tag-fast { background: var(--success-bg); color: var(--success-text); }
-  .tag-review { background: var(--warning-bg); color: var(--warning-text); }
-  .tag-human { background: var(--danger-bg); color: var(--danger-text); }
-  .tag-detail { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-  .tag-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
-
-  .launch-btn {
-    display: inline-flex; align-items: center; gap: 7px;
-    margin-top: 10px; padding: 8px 16px; border-radius: var(--radius);
-    border: 0.5px solid var(--border-strong); background: var(--surface-alt);
-    color: var(--text-primary); font-size: 13px; text-decoration: none;
-    cursor: pointer; transition: all 0.15s; font-family: inherit;
-    position: relative;
-  }
-  .launch-btn:hover { background: var(--teal-bg); color: var(--teal-dark); border-color: var(--teal); }
-  .launch-btn .btn-icon { font-size: 14px; }
-
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(10px);
-    background: var(--text-primary); color: var(--bg); padding: 9px 18px;
-    border-radius: 20px; font-size: 13px; opacity: 0; pointer-events: none;
-    transition: all 0.25s; z-index: 999; white-space: nowrap;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  .result-banner {
-    background: var(--accent-bg); border: 0.5px solid var(--accent-border);
-    border-radius: var(--radius); padding: 10px 14px; margin-top: 12px;
-    font-size: 13px; color: var(--accent-text); display: none;
-  }
-  .result-banner.show { display: block; }
-
-  .main-launch {
-    display: inline-flex; align-items: center; gap: 8px;
-    margin-top: 14px; padding: 9px 18px; border-radius: var(--radius);
-    border: 0.5px solid var(--border-strong); background: var(--surface-alt);
-    color: var(--text-primary); font-size: 13px; cursor: pointer;
-    transition: all 0.15s; font-family: inherit;
-  }
-  .main-launch:hover { background: var(--teal-bg); color: var(--teal-dark); border-color: var(--teal); }
-
-  .section-label { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.01em; }
-
-  .legend { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 1rem; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
-
-  .notice {
-    background: var(--warning-bg); color: var(--warning-text); border-radius: var(--radius);
-    padding: 10px 14px; font-size: 12px; margin-bottom: 1.25rem; line-height: 1.5;
-  }
-
+  .reset-link { font-size: 12px; color: var(--text-muted); cursor: pointer; text-decoration: underline; background: none; border: none; font-family: inherit; }
+  .fallback-link { font-size: 12px; color: var(--accent-text); margin-top: 10px; display: inline-block; }
   footer { margin-top: 2rem; font-size: 12px; color: var(--text-muted); text-align: center; padding-bottom: 2rem; }
-
-  @media (max-width: 480px) {
-    body { padding: 1rem 0.75rem; }
-    .card, .task-card { padding: 1rem; }
-  }
 </style>
 </head>
 <body>
@@ -190,328 +103,235 @@
   <header>
     <div class="logo-row">
       <div class="logo-mark">TA</div>
-      <h1>R&amp;E AI Assistant</h1>
+      <h1>R&amp;E AI Assistant — Live</h1>
     </div>
     <p class="subtitle">TaxAce Group Inc. · Research &amp; Evaluation Lead</p>
   </header>
 
-  <p class="notice">Works for any teammate with access to AICC Vena OID — no personal Skills install needed. Every prompt below tells Claude exactly which specialist file in the Project to follow.</p>
+  <p class="notice" id="mode-notice">Calls Claude directly — no copy/paste needed.</p>
 
-  <!-- Top task card -->
   <div class="card">
-    <label for="task-input">What are you working on today?</label>
-    <textarea id="task-input" rows="2" placeholder="e.g. I need to evaluate a new AI tool for client intake..."></textarea>
-
-    <p class="chips-label">Or pick a common R&amp;E task:</p>
-    <div class="chips" id="chips">
-      <span class="chip" data-task="Evaluate a new AI tool or software">Evaluate a tool</span>
-      <span class="chip" data-task="Run a stack audit and find cost savings">Stack audit</span>
-      <span class="chip" data-task="Research market alternatives to a tool we use">Market research</span>
-      <span class="chip" data-task="Write an evaluation report for leadership">Write a report</span>
-      <span class="chip" data-task="Review and test a prompt before it goes live">Prompt QA</span>
-      <span class="chip" data-task="Track whether an adopted tool is actually being used">Adoption check</span>
-      <span class="chip" data-task="Document a confirmed result as a case study">Case study</span>
-      <span class="chip" id="other-chip">Other ▾</span>
+    <div id="active-specialist-row"></div>
+    <label for="specialist-select">Specialist</label>
+    <div class="field">
+      <select id="specialist-select"></select>
     </div>
-
-    <select id="other-select" style="display:none;margin-top:10px;width:100%;padding:9px 12px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:var(--surface-alt);color:var(--text-primary);font-size:13px;font-family:inherit;">
-      <option value="">Choose a specialist directly…</option>
-      <option value="AI Tool Evaluator">AI Tool Evaluator — assess one new tool, adopt/improve/reject</option>
-      <option value="Research Specialist">Research Specialist — outside info, market, competitors</option>
-      <option value="Report Writer">Report Writer — turn TaxAce's own data into an exec report</option>
-      <option value="Case Study Writer">Case Study Writer — document a confirmed result</option>
-      <option value="AI + Tech Stack Optimization Evaluator">AI + Tech Stack Optimization Evaluator — full stack audit</option>
-      <option value="Accuracy Validator">Accuracy Validator — score any finished output before it's used</option>
-      <option value="Prompt QA Reviewer">Prompt QA Reviewer — test a prompt before it goes live</option>
-      <option value="Adoption Check">Adoption Check — is a live tool healthy or at risk</option>
-      <option value="Not sure">Not sure — check AICC Vena OID for the right specialist</option>
-    </select>
-
-    <div class="result-banner" id="result-banner"></div>
-
-    <div>
-      <button class="main-launch" id="ace-btn" onclick="launchMain()">
-        <span>📋</span> Copy prompt &amp; open AICC Vena OID ↗
-      </button>
-      <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">Copies your prompt to clipboard, then opens the Project. Paste to start.</p>
+    <label for="task-input">What do you need?</label>
+    <div class="field">
+      <textarea id="task-input" rows="3" placeholder="Describe your task..."></textarea>
+    </div>
+    <div class="send-row">
+      <button class="send-btn" id="send-btn">Send</button>
     </div>
   </div>
 
-  <hr class="divider">
+  <div class="thread" id="thread"></div>
 
-  <p class="section-label">Full R&amp;E task library — how AI can help</p>
-
-  <!-- Tool evaluation -->
-  <div class="task-card">
-    <p class="task-title">Tool evaluation</p>
-    <p class="task-desc">Assessing a new AI tool, software, or vendor solution before TaxAce commits.</p>
-    <span class="file-tag">📄 AI-Tool-Evaluator-Specialist.md</span>
-    <div class="tags">
-      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Research brief · Five-lens assessment · Draft report · Gap list</span></div>
-      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Final adopt/improve/reject call · Data privacy sign-off</span></div>
-    </div>
-    <button class="launch-btn" onclick="launchByTask(this, 'Evaluate a new AI tool or software')">
-      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
-    </button>
-  </div>
-
-  <!-- Stack audit -->
-  <div class="task-card">
-    <p class="task-title">Stack audit &amp; cost reduction</p>
-    <p class="task-desc">Reviewing TaxAce's full tool inventory to find waste, overlap, or better options.</p>
-    <span class="file-tag">📄 Stack-audit-cost-reduction.md → AI-Tech-Stack-Optimization-Evaluator-Specialist.md</span>
-    <div class="tags">
-      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Enriched inventory · Duplicate map · Savings estimate · Priority action list</span></div>
-      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Locked contracts · Compliance-required tools · Final recommendations to leadership</span></div>
-    </div>
-    <button class="launch-btn" onclick="launchByTask(this, 'Run a stack audit and find cost savings')">
-      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
-    </button>
-  </div>
-
-  <!-- Market research -->
-  <div class="task-card">
-    <p class="task-title">Market research</p>
-    <p class="task-desc">Finding current pricing, competitor landscape, and vendor context before an evaluation or audit.</p>
-    <span class="file-tag">📄 Research-Specialist.md</span>
-    <div class="tags">
-      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Competitor landscape · Pricing comparison · Vendor change flags</span></div>
-      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Verify pricing before presenting to leadership</span></div>
-    </div>
-    <button class="launch-btn" onclick="launchByTask(this, 'Research market alternatives to a tool we use')">
-      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
-    </button>
-  </div>
-
-  <!-- Report writing -->
-  <div class="task-card">
-    <p class="task-title">Evaluation report writing</p>
-    <p class="task-desc">Turning raw audit or evaluation findings into a leadership-ready document in TaxAce's voice.</p>
-    <span class="file-tag">📄 Report Writer specialist (checked live against roster + files)</span>
-    <div class="tags">
-      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Executive summary · Findings write-up · Priority action list</span></div>
-      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Accuracy of all figures · Internal context AI doesn't have</span></div>
-    </div>
-    <button class="launch-btn" onclick="launchByTask(this, 'Write an evaluation report for leadership')">
-      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
-    </button>
-  </div>
-
-  <!-- Prompt QA -->
-  <div class="task-card">
-    <p class="task-title">Prompt QA review</p>
-    <p class="task-desc">Testing AI prompts for accuracy, guardrail compliance, and hallucination risk before they go live.</p>
-    <span class="file-tag">📄 taxace-prompt-qa-reviewer.md</span>
-    <div class="tags">
-      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Red-team questions · Guardrail check · Risk flags with fixes</span></div>
-      <div class="tag-row"><span class="tag tag-human">Human approves</span><span class="tag-detail">Any prompt touching client data or compliance — no exceptions</span></div>
-    </div>
-    <button class="launch-btn" onclick="launchByTask(this, 'Review and test a prompt before it goes live')">
-      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
-    </button>
-  </div>
-
-  <!-- Adoption tracking -->
-  <div class="task-card">
-    <p class="task-title">Adoption check</p>
-    <p class="task-desc">Assessing whether an adopted tool or workflow is being used correctly, delivering value, and worth continuing.</p>
-    <span class="file-tag">📄 Adoption Check specialist (checked live against roster + files)</span>
-    <div class="tags">
-      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">Usage question set · Before/after comparison · Healthy / At Risk / Failing status</span></div>
-      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Actual usage data from team · Final Continue / Adjust / Escalate call</span></div>
-    </div>
-    <button class="launch-btn" onclick="launchByTask(this, 'Track whether an adopted tool is actually being used')">
-      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
-    </button>
-  </div>
-
-  <!-- Case study -->
-  <div class="task-card">
-    <p class="task-title">Case study writing</p>
-    <p class="task-desc">Turning one confirmed AI-initiative result into a structured evidence document TaxAce carries forward.</p>
-    <span class="file-tag">📄 Case Study Writer specialist (checked live against roster + files)</span>
-    <div class="tags">
-      <div class="tag-row"><span class="tag tag-fast">AI drafts</span><span class="tag-detail">What happened · What changed · What TaxAce carries forward</span></div>
-      <div class="tag-row"><span class="tag tag-review">Human reviews</span><span class="tag-detail">Confirm the result is actually settled before documenting it</span></div>
-    </div>
-    <button class="launch-btn" onclick="launchByTask(this, 'Document a confirmed result as a case study')">
-      <span class="btn-icon">📋</span> Copy &amp; open AICC Vena OID ↗
-    </button>
-  </div>
-
-  <hr class="divider">
-
-  <div class="legend">
-    <div class="legend-item"><span class="tag tag-fast">AI drafts</span> AI generates first — fast, complete</div>
-    <div class="legend-item"><span class="tag tag-review">Human reviews</span> You verify before it's final</div>
-    <div class="legend-item"><span class="tag tag-human">Human approves</span> You decide — no exceptions</div>
-  </div>
-
-  <footer>TaxAce Group Inc. · R&amp;E AI Assistant · Updated July 2026</footer>
+  <footer>TaxAce Group Inc. · R&amp;E AI Assistant · Live specialist calls</footer>
 
 </div>
 
-<!-- Toast notification -->
-<div class="toast" id="toast">✓ Prompt copied — paste it in AICC Vena OID</div>
-
 <script>
-const PROJECT_URL = 'https://claude.ai/project/019f02c9-08b3-7654-97d2-808d9c6738fb';
+const DOSSIER_RULE = "TaxAce operating rule: AI drafts, humans decide. Never finalize a filing, compliance decision, or client communication. Always state clearly that a human at TaxAce must review this before it is used, shared, or acted on. Keep responses practical and specific to TaxAce Group Inc., a tax and accounting firm.";
 
-// Shared fallback instruction appended to every specialist prompt.
-// If the named file isn't in the Project, Claude checks the roster and
-// picks the nearest match instead of stopping.
-function withFallback(fileRef, ask) {
-  return 'Open and follow ' + fileRef + ' from this Project\'s files exactly. ' + ask +
-    ' If ' + fileRef + ' isn\'t in this Project\'s files, check TaxAce-AI-Team-Roster.md, ' +
-    'find the specialist file that\'s the nearest match for this task, use that one instead, ' +
-    'and tell me which file you ended up using.';
-}
-
-const prompts = {
-  'Evaluate a new AI tool or software': {
-    text: 'This prompt tells Claude to follow AI-Tool-Evaluator-Specialist.md — if that file isn\'t found, it falls back to the nearest roster match instead of stopping. Have the tool name, proposed use case, and any pricing or security docs ready.',
-    prompt: withFallback('AI-Tool-Evaluator-Specialist.md', 'Walk me through what I need to provide to run a tool evaluation.')
+const specialists = {
+  "TaxAce Intelligence": {
+    system: DOSSIER_RULE + " You are TaxAce Intelligence, the first-stop specialist for TaxAce Group Inc.'s Research & Evaluation function. Answer questions about TaxAce's internal operations and the outside world clearly and honestly, and when the answer isn't available, flag it immediately and route to the right specialist or person instead of guessing.\n\nSTEP 1 - Classify the question as one of three types:\nInternal - the answer lives inside TaxAce: a process, policy, system, team member's role, standard, or past decision.\nExternal - the answer lives outside TaxAce: a tax concept, regulatory rule, AI tool, industry trend, or general business/technology question.\nMixed - requires both.\n\nSTEP 2 - Answer by type:\nExternal: answer directly using available knowledge. Flag anything that may have changed recently or needs verification, and note your knowledge cutoff where relevant.\nInternal: IMPORTANT - in this live tool you have no access to TaxAce's dossier or uploaded reference documents, and no conversation context beyond what the user just told you. Treat internal TaxAce facts (process steps, policy thresholds, team structures, system specifics) as NOT confirmed unless the user has explicitly stated them in this conversation. Do not reconstruct or infer TaxAce-internal facts from general knowledge - flag and route instead.\nMixed: answer the external part directly, apply the internal rule above to the internal part.\n\nSTEP 3 - When the answer to an internal question is not available, do not guess. State clearly that it's not available from current sources, identify exactly what's missing, and route using this guide:\nA specific AI tool (new, proposed, under consideration) -> AI Tool Evaluator\nTaxAce's full tech stack, subscriptions, or spend -> AI + Tech Stack Optimization Evaluator\nExternal research, market trends, competitor info -> Research Specialist\nTaxAce's own data, metrics, or evaluation results -> Report Writer\nA confirmed result or outcome worth documenting -> Case Study Writer\nA prompt's quality before deployment -> Prompt QA Reviewer\nWhether an adopted tool or workflow is working -> Adoption Check\nAn artifact before it goes to Carissa for QA -> Artifact QA Specialist\nAny output needing accuracy verification -> Accuracy Validator\nTaxAce processes, policies, or artifact standards -> Carissa Gutierrez (QA / PM)\nClient data, Canopy records, or filing status -> the Canopy system or assigned Tax Reviewer\nHR, team, or personnel matters -> Hazel (HR Manager)\nBudget, financial decisions, or vendor contracts -> Joe Zamora (CFO)\nFinal approval on any artifact or major decision -> Nataly Zamora (CEO) or Ivy (COO)\nTax prep workflow specifics -> Amber (Tax Prep Manager / Process Owner)\n\nFORMAT YOUR ANSWER AS:\nAnswer - the response, stated plainly, no unnecessary preamble.\nConfidence level - Confirmed (sourced from something the user gave you in this conversation), Reliable (established general knowledge, verify before high-stakes use), or Unverified (not available from confirmed sources - see routing).\nSource or basis - what the answer is based on.\nFlag and route - only if Unverified. Name a specific specialist or person, never a vague 'check with the team.'\nFollow-up - optional, only if the question hints at a deeper decision or task.\n\nKeep answers as short as the question allows. Never state an internal TaxAce fact as Confirmed unless the user actually gave you that information in this conversation. Never reproduce or reconstruct client data - redirect to Canopy instead.",
+    starter: "Ask anything — a TaxAce process, a tax concept, an AI tool, industry standards, or a business decision."
   },
-  'Run a stack audit and find cost savings': {
-    text: 'This prompt points Claude to Stack-audit-cost-reduction.md and AI-Tech-Stack-Optimization-Evaluator-Specialist.md, with a roster fallback if either isn\'t found. Gather your tool inventory first — name, cost, billing cycle, and which team uses it.',
-    prompt: withFallback('Stack-audit-cost-reduction.md, then AI-Tech-Stack-Optimization-Evaluator-Specialist.md', 'What inventory do I need to gather first to run this workflow?')
+  "AI Tool Evaluator": {
+    system: DOSSIER_RULE + " You are the AI Tool Evaluator for TaxAce's Research & Evaluation function. Job: assess one AI tool against TaxAce's standards and return an adopt, improve, or reject recommendation. Call this when a new AI tool, model, or vendor solution needs evaluation before TaxAce commits to it.",
+    starter: "Help me run a tool evaluation. Walk me through what you need from me to get started."
   },
-  'Research market alternatives to a tool we use': {
-    text: 'This prompt tells Claude to follow Research-Specialist.md, with a roster fallback if it isn\'t found.',
-    prompt: withFallback('Research-Specialist.md', 'Help me structure research into market alternatives to a tool TaxAce currently uses.')
+  "Research Specialist": {
+    system: DOSSIER_RULE + " You are the Research Specialist for TaxAce's Research & Evaluation function. Job: gather and summarize what TaxAce needs to know about a topic, market, or competitor as a structured summary organized by theme. Call this when the answer is out in the world — research, market updates, competitor checks, or outside information.",
+    starter: "I need to research market alternatives to a tool TaxAce currently uses. Help me structure the research."
   },
-  'Write an evaluation report for leadership': {
-    text: 'This prompt tells Claude to follow the Report Writer specialist file, with a roster fallback to the nearest match if it isn\'t found.',
-    prompt: withFallback('the Report Writer specialist file', 'Help me write a leadership-ready report from my findings.')
+  "Report Writer": {
+    system: DOSSIER_RULE + " You are the Report Writer for TaxAce's Research & Evaluation function. Job: turn TaxAce's internal data and findings into a plain-English, executive-ready report that explains what changed, why it matters, and what to do next. Call this when the answer is in TaxAce's own data — evaluation scores, metrics, survey results, or internal findings.",
+    starter: "I have evaluation findings ready. Help me write a leadership-ready report in TaxAce's voice."
   },
-  'Review and test a prompt before it goes live': {
-    text: 'This prompt tells Claude to follow taxace-prompt-qa-reviewer.md, with a roster fallback if it isn\'t found. Human approval required before it goes live — no exceptions.',
-    prompt: withFallback('taxace-prompt-qa-reviewer.md', 'Help me QA a prompt against TaxAce dossier guardrails before it goes live.')
+  "Case Study Writer": {
+    system: DOSSIER_RULE + " You are the Case Study Writer for TaxAce's Research & Evaluation function. Job: turn one confirmed result from an AI initiative or workflow change into a structured evidence document that captures what happened and what TaxAce carries forward. Call this when a result is confirmed and needs to be documented as institutional proof.",
+    starter: "I have a confirmed result from an AI initiative. Help me document it as a case study."
   },
-  'Track whether an adopted tool is actually being used': {
-    text: 'This prompt tells Claude to follow the Adoption Check specialist file, with a roster fallback if it isn\'t found. Gather actual usage data from the team first.',
-    prompt: withFallback('the Adoption Check specialist file', 'Help me assess whether a tool TaxAce adopted is healthy, at risk, or failing.')
+  "AI + Tech Stack Optimization Evaluator": {
+    system: DOSSIER_RULE + " You are the AI + Tech Stack Optimization Evaluator for TaxAce's Research & Evaluation function. Job: review TaxAce's existing tools, subscriptions, and systems to find duplication, waste, and consolidation opportunities, and return a decision-ready cost optimization report with a recommendation for every tool. Call this for stack audits, subscription reviews, cost reduction assessments, or pre-budget clean-ups.",
+    starter: "Help me run a stack audit and cost reduction pass. What inventory do you need from me first?"
   },
-  'Document a confirmed result as a case study': {
-    text: 'This prompt tells Claude to follow the Case Study Writer specialist file, with a roster fallback if it isn\'t found.',
-    prompt: withFallback('the Case Study Writer specialist file', 'Help me document a confirmed AI initiative result as a case study.')
+  "Accuracy Validator": {
+    system: DOSSIER_RULE + " You are the Accuracy Validator for TaxAce's Research & Evaluation function. Job: validate the accuracy of any completed output, AI-generated or human-written, and return an accuracy score out of 10 plus a Pass or Fail verdict with every issue identified. Call this on any output before it is used, shared, approved, or acted on.",
+    starter: "I have a finished output I need validated for accuracy before it goes out. What do you need from me?"
+  },
+  "Prompt QA Reviewer": {
+    system: DOSSIER_RULE + " You are the Prompt QA Reviewer for TaxAce's Research & Evaluation function. Job: test and score a prompt against TaxAce's quality, accuracy, compliance, and operational standards, and return a Deploy, Revise, or Rebuild verdict with specific fixes. Call this before any new or revised prompt goes into active use.",
+    starter: "I have a prompt I want to QA before it goes live at TaxAce. Help me test it."
+  },
+  "Adoption Check": {
+    system: DOSSIER_RULE + " You are the Adoption Check specialist for TaxAce's Research & Evaluation function. Job: assess whether an adopted tool or workflow is being used correctly, delivering value, and worth continuing, and return a Healthy, At Risk, or Failing health status with a Continue, Adjust, or Escalate recommendation. Call this at a defined checkpoint after go-live, or when leadership asks whether something is working.",
+    starter: "Help me check whether a tool TaxAce adopted is actually being used and delivering value."
   }
 };
 
-// Specialists reachable only via the "Other" dropdown
-const otherSpecialists = {
-  'AI Tool Evaluator': withFallback('AI-Tool-Evaluator-Specialist.md', 'Help me run a tool evaluation.'),
-  'Research Specialist': withFallback('Research-Specialist.md', 'Help me with market and vendor research.'),
-  'Report Writer': withFallback('the Report Writer specialist file', 'Help me turn findings into a leadership-ready report.'),
-  'Case Study Writer': withFallback('the Case Study Writer specialist file', 'Help me document a confirmed result as a case study.'),
-  'AI + Tech Stack Optimization Evaluator': withFallback('Stack-audit-cost-reduction.md, then AI-Tech-Stack-Optimization-Evaluator-Specialist.md', 'Help me run a full stack audit.'),
-  'Accuracy Validator': withFallback('Accuracy-Validator-Specialist.md', 'Help me score a finished output for accuracy before it\'s used.') + ' You can also use the dedicated Accuracy Validator tool on the Hub for this.',
-  'Prompt QA Reviewer': withFallback('taxace-prompt-qa-reviewer.md', 'Help me test a prompt before it goes live.'),
-  'Adoption Check': withFallback('the Adoption Check specialist file', 'Help me assess whether a live tool is healthy or at risk.'),
-  'Not sure': 'Check TaxAce-AI-Team-Roster.md in this Project\'s files, tell me which specialist fits my task, then open and follow that specialist\'s file — and if there\'s no exact match, use the nearest one and tell me which you used.'
-};
+const specialistSelect = document.getElementById('specialist-select');
+Object.keys(specialists).forEach(name => {
+  const opt = document.createElement('option');
+  opt.value = name;
+  opt.textContent = name;
+  specialistSelect.appendChild(opt);
+});
 
-let currentPrompt = '';
+const taskInput = document.getElementById('task-input');
+const sendBtn = document.getElementById('send-btn');
+const thread = document.getElementById('thread');
+const activeRow = document.getElementById('active-specialist-row');
 
-function copyAndOpen(text) {
-  navigator.clipboard.writeText(text).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  });
-  showToast();
-  setTimeout(() => window.open(PROJECT_URL, '_blank'), 300);
+let history = [];
+let currentSpecialist = null;
+
+// Leave blank to call Claude directly — only works when this file is opened as
+// a Claude artifact (inside claude.ai), since that's the only place the API key
+// is handled automatically. Paste your deployed Apps Script proxy URL here once
+// you've set up re-assistant-proxy.gs, and this same file works standalone too
+// (e.g. hosted on GitHub Pages) — see re-assistant-proxy.gs for setup steps.
+const PROXY_URL = 'https://script.google.com/macros/s/AKfycbxbyZy6kVER1kwqxo9f82BlRsarFWGh5--brkQrJX6tsZeIjPodtZrCaZzVaUpySV-V/exec';
+// Must exactly match SHARED_SECRET in re-assistant-proxy.gs if you're using the proxy.
+const PROXY_SECRET = 'TaxAce2026';
+
+if (PROXY_URL) {
+  document.getElementById('mode-notice').textContent =
+    'Standalone mode — runs through your own backend, no claude.ai needed.';
 }
 
-function showToast() {
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
+function renderActiveRow() {
+  if (!currentSpecialist) { activeRow.innerHTML = ''; return; }
+  activeRow.innerHTML = '<div class="active-specialist"><span>Talking to: ' + currentSpecialist + '</span><button class="reset-link" id="reset-btn">Start over</button></div>';
+  document.getElementById('reset-btn').addEventListener('click', resetThread);
 }
 
-function launchPrompt(btn, promptText) {
-  const orig = btn.innerHTML;
-  btn.innerHTML = '<span>✓</span> Copied! Opening…';
-  setTimeout(() => { btn.innerHTML = orig; }, 2000);
-  copyAndOpen(promptText);
+function resetThread() {
+  history = [];
+  currentSpecialist = null;
+  thread.innerHTML = '';
+  taskInput.value = '';
+  renderActiveRow();
 }
 
-// Task-card buttons call this so they always match the chip prompts exactly — no drift.
-function launchByTask(btn, taskKey) {
-  const p = prompts[taskKey];
-  if (p) launchPrompt(btn, p.prompt);
+function addMessage(role, text, isError) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'user' ? 'msg-user' : 'msg-assistant') + (isError ? ' msg-error' : '');
+  const label = document.createElement('div');
+  label.className = 'msg-label';
+  label.textContent = role === 'user' ? 'You' : (isError ? 'Error' : currentSpecialist || 'Claude');
+  div.appendChild(label);
+  const body = document.createElement('div');
+  body.textContent = text;
+  div.appendChild(body);
+  thread.appendChild(div);
+  thread.scrollTop = thread.scrollHeight;
+  return div;
 }
 
-function launchMain() {
-  let text = currentPrompt;
-  if (!text) {
-    const val = document.getElementById('task-input').value.trim();
-    if (val) {
-      text = 'Check TaxAce-AI-Team-Roster.md in this Project\'s files to find the right specialist, then open and follow that specialist file exactly. My task: ' + val;
+function addLoading() {
+  const div = document.createElement('div');
+  div.className = 'loading';
+  div.id = 'loading-indicator';
+  div.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div><span>' + (currentSpecialist || 'Claude') + ' is working…</span>';
+  thread.appendChild(div);
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function removeLoading() {
+  const el = document.getElementById('loading-indicator');
+  if (el) el.remove();
+}
+
+async function sendMessage() {
+  const text = taskInput.value.trim();
+  if (!text) { taskInput.focus(); return; }
+
+  const specialistName = specialistSelect.value;
+  const isNewThread = currentSpecialist !== specialistName;
+  if (isNewThread) {
+    history = [];
+    currentSpecialist = specialistName;
+    renderActiveRow();
+  }
+
+  addMessage('user', text);
+  history.push({ role: 'user', content: text });
+  taskInput.value = '';
+  sendBtn.disabled = true;
+  addLoading();
+
+  try {
+    const requestBody = {
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      system: specialists[specialistName].system,
+      messages: history
+    };
+
+    let response;
+    if (PROXY_URL) {
+      // Standalone mode — through your own backend, which holds the real API key.
+      response = await fetch(PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, // avoids a CORS preflight Apps Script doesn't handle
+        body: JSON.stringify({ ...requestBody, secret: PROXY_SECRET })
+      });
     } else {
-      text = 'Check TaxAce-AI-Team-Roster.md in this Project\'s files and tell me which specialists and workflows are available to me.';
+      // Artifact mode — Claude's own API-in-artifact handling, no key needed.
+      response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody)
+      });
     }
+
+    const data = await response.json();
+    removeLoading();
+
+    if (data.error) {
+      addMessage('assistant', typeof data.error === 'string' ? data.error : (data.error.message || 'The backend returned an error.'), true);
+      return;
+    }
+
+    const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
+    let replyText = textBlocks.join('\n') || 'No response text returned.';
+    if (data.provider === 'openai-fallback') {
+      replyText = 'Claude was unavailable, so this response came from the backup AI instead — treat it as a lighter-quality stand-in.\n\n' + replyText;
+    }
+
+    addMessage('assistant', replyText);
+    history.push({ role: 'assistant', content: replyText });
+  } catch (err) {
+    removeLoading();
+    addMessage('assistant', 'Could not reach Claude just now. Try again, or use the copy/paste version of the RE Assistant instead.', true);
+    console.error(err);
+  } finally {
+    sendBtn.disabled = false;
   }
-  const btn = document.getElementById('ace-btn');
-  const orig = btn.innerHTML;
-  btn.innerHTML = '<span>✓</span> Copied! Opening…';
-  setTimeout(() => { btn.innerHTML = orig; }, 2000);
-  copyAndOpen(text);
 }
 
-const banner = document.getElementById('result-banner');
-const input = document.getElementById('task-input');
-
-document.querySelectorAll('.chip[data-task]').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    document.getElementById('other-select').style.display = 'none';
-    document.getElementById('other-select').value = '';
-    chip.classList.add('active');
-    const task = chip.dataset.task;
-    input.value = task;
-    const p = prompts[task];
-    if (p) {
-      currentPrompt = p.prompt;
-      banner.textContent = p.text;
-      banner.classList.add('show');
-    }
-  });
-});
-
-const otherChip = document.getElementById('other-chip');
-const otherSelect = document.getElementById('other-select');
-
-otherChip.addEventListener('click', () => {
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  otherChip.classList.add('active');
-  otherSelect.style.display = otherSelect.style.display === 'none' ? 'block' : 'none';
-});
-
-otherSelect.addEventListener('change', () => {
-  const name = otherSelect.value;
-  if (!name) return;
-  input.value = name === 'Not sure' ? 'Not sure which specialist I need' : name;
-  currentPrompt = otherSpecialists[name];
-  banner.textContent = 'Prompt set to call the ' + name + ' specialist directly.';
-  banner.classList.add('show');
-});
-
-input.addEventListener('input', () => {
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  currentPrompt = '';
-  const val = input.value.trim();
-  if (val.length > 10) {
-    banner.textContent = 'Type your task, then click the button. Claude will check TaxAce-AI-Team-Roster.md for the right specialist file automatically.';
-    banner.classList.add('show');
-  } else {
-    banner.classList.remove('show');
+sendBtn.addEventListener('click', sendMessage);
+taskInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
   }
+});
+
+specialistSelect.addEventListener('change', () => {
+  if (currentSpecialist && currentSpecialist !== specialistSelect.value) {
+    taskInput.placeholder = 'Switching specialist will start a new thread...';
+  }
+});
+
+// Pre-fill a starter prompt for the first specialist so the box isn't empty
+taskInput.placeholder = specialists[specialistSelect.value].starter;
+specialistSelect.addEventListener('change', () => {
+  taskInput.placeholder = specialists[specialistSelect.value].starter;
 });
 </script>
 </body>
