@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaxAce R&E Weekly Digest</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f4f0;--surface:#fff;--surface-alt:#f1efe8;
+  --border:rgba(0,0,0,0.09);--border-strong:rgba(0,0,0,0.16);
+  --text:#1a1a18;--text-2:#5f5e5a;--text-3:#888780;
+  --teal:#0f6e56;--teal-light:#e1f5ee;--teal-dark:#085041;
+  --green-bg:#eaf3de;--green-text:#3b6d11;
+  --red-bg:#fcebeb;--red-text:#a32d2d;
+  --amber-bg:#faeeda;--amber-text:#854f0b;
+  --blue-bg:#e6f1fb;--blue-text:#185fa5;
+  --radius:8px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1a1a18;--surface:#2c2c2a;--surface-alt:#242422;
+  --border:rgba(255,255,255,0.07);--border-strong:rgba(255,255,255,0.13);
+  --text:#e8e6de;--text-2:#9c9a92;--text-3:#5f5e5a;
+  --teal:#5dcaa5;--teal-light:#04342c;--teal-dark:#9fe1cb;
+  --green-bg:#27500a;--green-text:#c0dd97;
+  --red-bg:#501313;--red-text:#f7c1c1;
+  --amber-bg:#412402;--amber-text:#fac775;
+  --blue-bg:#042c53;--blue-text:#b5d4f4;
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;padding:0 0 2rem}
+.wrap{max-width:760px;margin:0 auto;padding:0 1rem}
+
+.topnav{background:var(--surface);border-bottom:0.5px solid var(--border);padding:10px 1rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nav-link{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;border:0.5px solid var(--border-strong);background:var(--surface-alt);color:var(--text-2);font-size:12px;text-decoration:none}
+
+.header{display:flex;align-items:center;gap:10px;margin:2rem 0}
+.logomark{width:34px;height:34px;border-radius:9px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.5px}
+.header-text h1{font-size:17px;font-weight:500}
+.header-text p{font-size:12px;color:var(--text-3);margin-top:1px}
+
+.week-bar{display:flex;align-items:center;justify-content:space-between;background:var(--teal-light);border:0.5px solid var(--teal);border-radius:10px;padding:12px 16px;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.week-label{font-size:13px;color:var(--teal-dark);font-weight:500}
+.week-sub{font-size:11px;color:var(--teal-dark);opacity:.8}
+
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.section-title{font-size:13px;font-weight:500;color:var(--text)}
+.section-sub{font-size:11px;color:var(--text-3);margin-top:-6px;margin-bottom:10px;display:block}
+.count-pill{font-size:11px;color:var(--text-3);background:var(--surface-alt);padding:2px 9px;border-radius:10px}
+
+/* stat row */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.stat-box{background:var(--surface-alt);border-radius:var(--radius);padding:12px 10px;text-align:center}
+.stat-num{font-size:22px;font-weight:500;color:var(--teal)}
+.stat-lbl{font-size:10.5px;color:var(--text-3);margin-top:2px;line-height:1.3}
+
+/* validation history rows (read-only, pulled from validator) */
+.vhist-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--border)}
+.vhist-item:last-child{border-bottom:none}
+.vhist-score{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.vhist-score.pass{background:var(--green-bg);color:var(--green-text)}
+.vhist-score.fail{background:var(--red-bg);color:var(--red-text)}
+.vhist-score.review{background:var(--amber-bg);color:var(--amber-text)}
+.vhist-info{flex:1;min-width:0}
+.vhist-type{font-size:12px;font-weight:500;color:var(--text)}
+.vhist-meta{font-size:11px;color:var(--text-3)}
+.vhist-verdict{font-size:11px;font-weight:500}
+.vhist-verdict.pass{color:var(--green-text)}
+.vhist-verdict.fail{color:var(--red-text)}
+.vhist-verdict.review{color:var(--amber-text)}
+
+/* pending / action item rows */
+.item-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.item-row:last-child{border-bottom:none}
+.item-check{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border-strong);background:var(--surface-alt);flex-shrink:0;cursor:pointer;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .15s}
+.item-check:hover{border-color:var(--teal)}
+.item-check.checked{background:var(--teal);border-color:var(--teal);color:#fff}
+.item-body{flex:1;min-width:0}
+.item-title{font-size:13px;color:var(--text)}
+.item-title.done{text-decoration:line-through;color:var(--text-3)}
+.item-meta{font-size:11px;color:var(--text-3);margin-top:2px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.item-remove{cursor:pointer;color:var(--text-3);background:none;border:none;font-size:14px;padding:2px 4px;flex-shrink:0}
+.item-remove:hover{color:var(--red-text)}
+
+.tag-mini{font-size:10px;font-weight:500;padding:1px 7px;border-radius:8px}
+.tag-high{background:var(--red-bg);color:var(--red-text)}
+.tag-medium{background:var(--amber-bg);color:var(--amber-text)}
+.tag-low{background:var(--blue-bg);color:var(--blue-text)}
+.tag-stage{background:var(--surface-alt);color:var(--text-2)}
+
+.empty-note{font-size:12px;color:var(--text-3);text-align:center;padding:1.2rem 0;font-style:italic}
+
+/* add form */
+.add-form{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.add-form input[type=text]{flex:1;min-width:160px;padding:8px 10px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:var(--surface-alt);color:var(--text);font-size:12.5px;font-family:inherit}
+.add-form input[type=text]:focus{outline:none;border-color:var(--teal)}
+.add-form select{padding:8px 8px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:var(--surface-alt);color:var(--text);font-size:12.5px;font-family:inherit}
+.add-btn{padding:8px 14px;border-radius:var(--radius);background:var(--teal);color:#fff;border:none;font-size:12.5px;font-family:inherit;cursor:pointer;white-space:nowrap}
+.add-btn:hover{filter:brightness(1.08)}
+
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:var(--radius);background:var(--teal);color:#fff;border:none;font-size:14px;font-family:inherit;font-weight:500;cursor:pointer;transition:all .15s;width:100%;justify-content:center}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-secondary{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius);background:var(--surface-alt);color:var(--text-2);border:0.5px solid var(--border-strong);font-size:13px;font-family:inherit;cursor:pointer;transition:all .15s}
+.btn-secondary:hover{background:var(--teal-light);color:var(--teal-dark);border-color:var(--teal)}
+
+textarea.focus-note{width:100%;padding:10px 12px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:var(--surface-alt);color:var(--text);font-size:13px;font-family:inherit;line-height:1.5;resize:vertical}
+textarea.focus-note:focus{outline:none;border-color:var(--teal)}
+
+/* digest output */
+.digest-output{display:none}
+.digest-output.show{display:block}
+.digest-box{background:var(--surface-alt);border-radius:var(--radius);border:0.5px solid var(--border);padding:16px;font-size:12.5px;line-height:1.7;white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;max-height:420px;overflow-y:auto}
+
+.history-item{padding:10px 0;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.history-item:last-child{border-bottom:none}
+.history-label{font-size:12.5px;color:var(--text)}
+.history-meta{font-size:11px;color:var(--text-3)}
+
+footer{margin-top:2rem;font-size:11px;color:var(--text-3);text-align:center}
+
+@media(max-width:540px){
+  .stat-row{grid-template-columns:repeat(3,1fr);gap:6px}
+  .stat-num{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a href="https://vena30.github.io/taxace-ai-hub/" class="nav-link">&#8592; Hub</a>
+  <a href="https://vena30.github.io/taxace-ai-hub/re-assistant.html" class="nav-link">R&amp;E Assistant</a>
+  <a href="https://vena30.github.io/taxace-ai-hub/stack-dashboard.html" class="nav-link">Stack Dashboard</a>
+  <a href="https://vena30.github.io/taxace-ai-hub/taxace-accuracy-validator.html" class="nav-link">Accuracy Validator</a>
+</div>
+
+<div class="wrap">
+
+  <div class="header">
+    <div class="logomark">TA</div>
+    <div class="header-text">
+      <h1>R&amp;E Weekly Digest</h1>
+      <p>TaxAce Group Inc. · Research &amp; Evaluation Lead tool</p>
+    </div>
+  </div>
+
+  <div class="week-bar">
+    <div>
+      <div class="week-label" id="week-label">Week of —</div>
+      <div class="week-sub">Auto-pulls validations · you track pending evaluations &amp; weekly tasks</div>
+    </div>
+    <button class="btn-secondary" onclick="scrollToGenerate()" style="font-size:12px">Generate digest &#8595;</button>
+  </div>
+
+  <!-- Stat summary -->
+  <div class="card">
+    <div class="section-head"><span class="section-title">This week at a glance</span></div>
+    <div class="stat-row" style="grid-template-columns:repeat(2,1fr)">
+      <div class="stat-box"><div class="stat-num" id="stat-validations">0</div><div class="stat-lbl">Validations run this week</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-pending">0</div><div class="stat-lbl">Evaluations pending</div></div>
+    </div>
+  </div>
+
+  <!-- Validations this week (auto from Accuracy Validator history) -->
+  <div class="card">
+    <div class="section-head">
+      <span class="section-title">Validations this week</span>
+      <span class="count-pill" id="vhist-count">0 runs</span>
+    </div>
+    <span class="section-sub">Pulled automatically from the Accuracy Validator's saved history on this device.</span>
+    <div id="vhist-list"></div>
+  </div>
+
+  <!-- Evaluations pending -->
+  <div class="card">
+    <div class="section-head">
+      <span class="section-title">Evaluations pending</span>
+      <span class="count-pill" id="pending-count">0 open</span>
+    </div>
+    <span class="section-sub">Tools, audits, or specialists mid-evaluation. Check off when moved to a verdict.</span>
+    <div id="pending-list"></div>
+    <div class="add-form">
+      <input type="text" id="pending-name" placeholder="e.g. Double API gate-check">
+      <select id="pending-stage">
+        <option>Researching</option>
+        <option>In evaluation</option>
+        <option>Awaiting vendor reply</option>
+        <option>Ready for verdict</option>
+        <option>N/A</option>
+        <option>Other</option>
+      </select>
+      <button class="add-btn" onclick="addPending()">Add</button>
+    </div>
+  </div>
+
+  <!-- This week's tasks (outside R&E) -->
+  <div class="card">
+    <div class="section-head">
+      <span class="section-title">This week's tasks (outside R&amp;E)</span>
+      <span class="count-pill" id="tasks-count">0 open</span>
+    </div>
+    <span class="section-sub">Anything else on your plate this week. Paste a whole list at once — each line becomes its own item — or add one at a time. Rolls into the same digest below.</span>
+    <div id="tasks-list"></div>
+    <textarea class="focus-note" id="tasks-paste" rows="3" placeholder="Paste your task list here, one per line…&#10;e.g.&#10;Follow up with Yesenia on DARB prototype&#10;Review Q3 invoices&#10;Prep agenda for Friday sync" style="margin-top:10px"></textarea>
+    <div class="add-form">
+      <input type="text" id="task-text" placeholder="Or add a single task">
+      <button class="add-btn" onclick="addTask()">Add</button>
+      <button class="btn-secondary" onclick="addTasksFromPaste()" style="font-size:12.5px">Add pasted list</button>
+    </div>
+  </div>
+
+  <button class="btn-primary" id="generate-btn" onclick="generateDigest()">Generate this week's digest</button>
+
+  <!-- Digest output -->
+  <div class="digest-output" id="digest-output">
+    <div class="card" style="margin-top:1rem">
+      <div class="section-head">
+        <span class="section-title">Digest — ready to share</span>
+      </div>
+      <div class="digest-box" id="digest-text"></div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn-secondary" onclick="copyDigest()">Copy to clipboard</button>
+        <button class="btn-secondary" onclick="exportDigest()">Export .txt</button>
+        <button class="btn-secondary" onclick="archiveDigest()">Archive this week</button>
+      </div>
+      <p id="copy-msg" style="font-size:11px;color:var(--teal);margin-top:8px;display:none"></p>
+    </div>
+  </div>
+
+  <!-- Digest history -->
+  <div class="card">
+    <div class="section-head">
+      <span class="section-title">Past digests</span>
+      <button class="btn-secondary" onclick="clearDigestHistory()" style="font-size:11px;padding:4px 10px">Clear</button>
+    </div>
+    <div id="digest-history-list"><p class="empty-note">No digests archived yet.</p></div>
+  </div>
+
+  <footer>TaxAce Group Inc. · R&amp;E Weekly Digest · R&amp;E Lead tool · Built July 2026</footer>
+</div>
+
+<script>
+const VALIDATOR_KEY = 'taxace-validator-v2';
+const PENDING_KEY = 'taxace-digest-pending';
+const TASKS_KEY = 'taxace-digest-tasks';
+const HISTORY_KEY = 'taxace-digest-history';
+
+function loadJSON(key, fallback){ try{ const d=localStorage.getItem(key); return d?JSON.parse(d):fallback; }catch(e){ return fallback; } }
+function saveJSON(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+// ---- Week range ----
+function getWeekRange(){
+  const now = new Date();
+  const day = now.getDay(); // 0 Sun - 6 Sat
+  const diffToMonday = (day === 0 ? -6 : 1 - day);
+  const monday = new Date(now); monday.setDate(now.getDate() + diffToMonday); monday.setHours(0,0,0,0);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate()+6); sunday.setHours(23,59,59,999);
+  return {start: monday, end: sunday};
+}
+function fmtDate(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function fmtDateFull(d){ return d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}); }
+
+const week = getWeekRange();
+document.getElementById('week-label').textContent = `Week of ${fmtDate(week.start)} – ${fmtDate(week.end)}`;
+
+// ---- Validations this week (read-only from Accuracy Validator) ----
+function getWeekValidations(){
+  const h = loadJSON(VALIDATOR_KEY, []);
+  return h.filter(item => {
+    const t = new Date(item.timestamp);
+    return t >= week.start && t <= week.end;
+  });
+}
+
+function renderValidations(){
+  const items = getWeekValidations();
+  document.getElementById('vhist-count').textContent = items.length + (items.length===1?' run':' runs');
+  document.getElementById('stat-validations').textContent = items.length;
+  const el = document.getElementById('vhist-list');
+  if (!items.length){
+    el.innerHTML = '<p class="empty-note">No validations run yet this week. Run one in the Accuracy Validator and it will show up here automatically.</p>';
+    return;
+  }
+  el.innerHTML = items.map(item=>{
+    const cls = item.verdict==='PASS'?'pass':item.verdict==='FAIL'?'fail':'review';
+    const date = new Date(item.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    const src = item.hasSource ? ` · source: ${item.sourceMode}` : ' · no source';
+    return `<div class="vhist-item">
+      <div class="vhist-score ${cls}">${item.score}</div>
+      <div class="vhist-info">
+        <div class="vhist-type">${esc(item.outputType)}</div>
+        <div class="vhist-meta">${date}${src}</div>
+      </div>
+      <span class="vhist-verdict ${cls}">${item.verdict}</span>
+    </div>`;
+  }).join('');
+}
+
+// ---- Evaluations pending ----
+function renderPending(){
+  const items = loadJSON(PENDING_KEY, []);
+  const open = items.filter(i=>!i.done);
+  document.getElementById('pending-count').textContent = open.length + ' open';
+  document.getElementById('stat-pending').textContent = open.length;
+  const el = document.getElementById('pending-list');
+  if (!items.length){ el.innerHTML = '<p class="empty-note">Nothing tracked yet. Add a tool or audit that\'s mid-evaluation below.</p>'; return; }
+  el.innerHTML = items.map(i=>`
+    <div class="item-row">
+      <button class="item-check ${i.done?'checked':''}" onclick="togglePending('${i.id}')">${i.done?'&#10003;':''}</button>
+      <div class="item-body">
+        <div class="item-title ${i.done?'done':''}">${esc(i.name)}</div>
+        <div class="item-meta"><span class="tag-mini tag-stage">${esc(i.stage)}</span><span>added ${fmtDate(new Date(i.added))}</span></div>
+      </div>
+      <button class="item-remove" onclick="removePending('${i.id}')" title="Remove">&#10005;</button>
+    </div>`).join('');
+}
+function addPending(){
+  const nameEl = document.getElementById('pending-name');
+  const name = nameEl.value.trim();
+  if (!name) return;
+  const stage = document.getElementById('pending-stage').value;
+  const items = loadJSON(PENDING_KEY, []);
+  items.unshift({id:uid(), name, stage, done:false, added:new Date().toISOString()});
+  saveJSON(PENDING_KEY, items);
+  nameEl.value = '';
+  renderPending();
+}
+function togglePending(id){
+  const items = loadJSON(PENDING_KEY, []);
+  const it = items.find(i=>i.id===id);
+  if (it) it.done = !it.done;
+  saveJSON(PENDING_KEY, items);
+  renderPending();
+}
+function removePending(id){
+  let items = loadJSON(PENDING_KEY, []);
+  items = items.filter(i=>i.id!==id);
+  saveJSON(PENDING_KEY, items);
+  renderPending();
+}
+
+// ---- This week's tasks (outside R&E) ----
+function renderTasks(){
+  const items = loadJSON(TASKS_KEY, []);
+  const open = items.filter(i=>!i.done);
+  document.getElementById('tasks-count').textContent = open.length + ' open';
+  const el = document.getElementById('tasks-list');
+  if (!items.length){ el.innerHTML = '<p class="empty-note">Nothing added yet. Paste a list below or add tasks one at a time.</p>'; return; }
+  el.innerHTML = items.map(i=>`
+    <div class="item-row">
+      <button class="item-check ${i.done?'checked':''}" onclick="toggleTask('${i.id}')">${i.done?'&#10003;':''}</button>
+      <div class="item-body">
+        <div class="item-title ${i.done?'done':''}">${esc(i.text)}</div>
+        <div class="item-meta"><span>added ${fmtDate(new Date(i.added))}</span></div>
+      </div>
+      <button class="item-remove" onclick="removeTask('${i.id}')" title="Remove">&#10005;</button>
+    </div>`).join('');
+}
+function addTask(){
+  const textEl = document.getElementById('task-text');
+  const text = textEl.value.trim();
+  if (!text) return;
+  const items = loadJSON(TASKS_KEY, []);
+  items.unshift({id:uid(), text, done:false, added:new Date().toISOString()});
+  saveJSON(TASKS_KEY, items);
+  textEl.value = '';
+  renderTasks();
+}
+function addTasksFromPaste(){
+  const pasteEl = document.getElementById('tasks-paste');
+  const raw = pasteEl.value;
+  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  if (!lines.length) return;
+  const items = loadJSON(TASKS_KEY, []);
+  const now = new Date().toISOString();
+  const newItems = lines.map(text => ({id:uid(), text, done:false, added:now}));
+  saveJSON(TASKS_KEY, [...newItems, ...items]);
+  pasteEl.value = '';
+  renderTasks();
+}
+function toggleTask(id){
+  const items = loadJSON(TASKS_KEY, []);
+  const it = items.find(i=>i.id===id);
+  if (it) it.done = !it.done;
+  saveJSON(TASKS_KEY, items);
+  renderTasks();
+}
+function removeTask(id){
+  let items = loadJSON(TASKS_KEY, []);
+  items = items.filter(i=>i.id!==id);
+  saveJSON(TASKS_KEY, items);
+  renderTasks();
+}
+
+// ---- Digest generation ----
+function scrollToGenerate(){
+  document.getElementById('generate-btn').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function generateDigest(){
+  const validations = getWeekValidations();
+  const pending = loadJSON(PENDING_KEY, []);
+  const tasks = loadJSON(TASKS_KEY, []);
+
+  const openPending = pending.filter(i=>!i.done);
+  const doneThisWeekPending = pending.filter(i=>i.done);
+  const openTasks = tasks.filter(i=>!i.done);
+  const doneTasks = tasks.filter(i=>i.done);
+
+  const passCount = validations.filter(v=>v.verdict==='PASS').length;
+  const reviewCount = validations.filter(v=>v.verdict==='REVIEW').length;
+  const failCount = validations.filter(v=>v.verdict==='FAIL').length;
+
+  let lines = [];
+  lines.push(`R&E WEEKLY DIGEST`);
+  lines.push(`Week of ${fmtDateFull(week.start)} – ${fmtDateFull(week.end)}`);
+  lines.push('');
+  lines.push(`BOTTOM LINE`);
+  lines.push(`${validations.length} validation${validations.length===1?'':'s'} run (${passCount} pass, ${reviewCount} review, ${failCount} fail) · ${openPending.length} evaluation${openPending.length===1?'':'s'} pending.`);
+  lines.push('');
+
+  lines.push(`VALIDATIONS THIS WEEK (${validations.length})`);
+  if (validations.length){
+    validations.forEach(v=>{
+      lines.push(`  - [${v.verdict}] ${v.outputType} — ${v.score}/10${v.hasSource ? ` (source: ${v.sourceMode})` : ' (no source)'}`);
+    });
+  } else {
+    lines.push(`  No validations run this week.`);
+  }
+  lines.push('');
+
+  lines.push(`EVALUATIONS PENDING (${openPending.length} open)`);
+  if (openPending.length){
+    openPending.forEach(p=> lines.push(`  - ${p.name} — ${p.stage}`));
+  } else {
+    lines.push(`  Nothing pending.`);
+  }
+  if (doneThisWeekPending.length){
+    lines.push(`  Cleared this week:`);
+    doneThisWeekPending.forEach(p=> lines.push(`    - ${p.name}`));
+  }
+  lines.push('');
+
+  lines.push(`THIS WEEK'S TASKS — OUTSIDE R&E (${openTasks.length} open)`);
+  if (openTasks.length){
+    openTasks.forEach(t=> lines.push(`  - [ ] ${t.text}`));
+  } else {
+    lines.push(`  Nothing tracked.`);
+  }
+  if (doneTasks.length){
+    doneTasks.forEach(t=> lines.push(`  - [x] ${t.text}`));
+  }
+  lines.push('');
+  lines.push(`---`);
+  lines.push(`TaxAce Group Inc. · R&E Weekly Digest`);
+
+  const text = lines.join('\n');
+  document.getElementById('digest-text').textContent = text;
+  document.getElementById('digest-output').classList.add('show');
+  document.getElementById('digest-output').scrollIntoView({behavior:'smooth', block:'start'});
+  window._currentDigest = text;
+}
+
+function copyDigest(){
+  if (!window._currentDigest) return;
+  navigator.clipboard.writeText(window._currentDigest).then(()=>{
+    const msg = document.getElementById('copy-msg');
+    msg.textContent = 'Copied to clipboard.';
+    msg.style.display = 'block';
+    setTimeout(()=>{ msg.style.display='none'; }, 2500);
+  });
+}
+
+function exportDigest(){
+  if (!window._currentDigest) return;
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(window._currentDigest);
+  a.download = `re-weekly-digest-${week.start.toISOString().slice(0,10)}.txt`;
+  a.click();
+}
+
+function archiveDigest(){
+  if (!window._currentDigest) return;
+  const history = loadJSON(HISTORY_KEY, []);
+  history.unshift({
+    weekOf: `${fmtDate(week.start)} – ${fmtDate(week.end)}`,
+    weekStart: week.start.toISOString(),
+    text: window._currentDigest,
+    generatedAt: new Date().toISOString()
+  });
+  if (history.length > 26) history.length = 26; // keep ~6 months
+  saveJSON(HISTORY_KEY, history);
+  renderDigestHistory();
+  const msg = document.getElementById('copy-msg');
+  msg.textContent = 'Archived. This week is now on record below.';
+  msg.style.display = 'block';
+  setTimeout(()=>{ msg.style.display='none'; }, 3000);
+}
+
+function renderDigestHistory(){
+  const history = loadJSON(HISTORY_KEY, []);
+  const el = document.getElementById('digest-history-list');
+  if (!history.length){ el.innerHTML = '<p class="empty-note">No digests archived yet.</p>'; return; }
+  el.innerHTML = history.map((h,idx)=>`
+    <div class="history-item">
+      <div>
+        <div class="history-label">Week of ${esc(h.weekOf)}</div>
+        <div class="history-meta">Archived ${new Date(h.generatedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+      </div>
+      <button class="btn-secondary" style="font-size:11px;padding:5px 10px" onclick="viewHistoryItem(${idx})">View</button>
+    </div>`).join('');
+}
+function viewHistoryItem(idx){
+  const history = loadJSON(HISTORY_KEY, []);
+  const h = history[idx];
+  if (!h) return;
+  document.getElementById('digest-text').textContent = h.text;
+  document.getElementById('digest-output').classList.add('show');
+  window._currentDigest = h.text;
+  document.getElementById('digest-output').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function clearDigestHistory(){
+  saveJSON(HISTORY_KEY, []);
+  renderDigestHistory();
+}
+
+// init
+renderValidations();
+renderPending();
+renderTasks();
+renderDigestHistory();
+</script>
+</body>
+</html>
